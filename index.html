@@ -11,14 +11,14 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦍</text></svg>">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦍</text></svg>">
     <style>
-        /* ====== STYLES COMPLETS ====== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background: #1e1e2f; padding: 16px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200"><text x="50%" y="55%" font-size="120" text-anchor="middle" dominant-baseline="central" opacity="0.15" transform="rotate(-10, 100, 100)">🦍</text></svg>'); background-repeat: repeat; background-size: 200px 200px; background-attachment: fixed; }
         #app { max-width: 500px; width: 100%; background: rgba(255,255,255,0.92); backdrop-filter: blur(2px); border-radius: 28px; padding: 24px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-bottom: 20px; position: relative; z-index: 1; border: 1px solid rgba(255,255,255,0.1); }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e9ecef; padding-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .header h1 { font-size: 20px; font-weight: 700; color: #1e293b; }
         .header-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-        .badge { background: #1e3a5f; color: white; font-weight: 600; font-size: 14px; padding: 6px 14px; border-radius: 30px; }
+        .badge { background: #1e3a5f; color: white; font-weight: 600; font-size: 14px; padding: 6px 14px; border-radius: 30px; cursor: pointer; transition: background 0.2s; }
+        .badge:hover { background: #2f5597; }
         .settings-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b; padding: 4px 8px; }
         .btn-help { background: none; border: none; font-size: 22px; cursor: pointer; color: #d97706; padding: 4px 8px; }
         .card { background: #f8fafc; border-radius: 16px; padding: 16px; margin-bottom: 16px; border-left: 4px solid #2f5597; }
@@ -104,6 +104,30 @@
         .log-exo { margin-left: 12px; font-size: 14px; color: #334155; }
         .log-exo strong { color: #0f172a; }
         .log-exo .reps { color: #64748b; }
+        .imbalance-card { background: #f8fafc; border-radius: 12px; padding: 12px; margin-top: 12px; border-left: 4px solid #b45309; }
+        .imbalance-card .bad { border-left-color: #dc2626; }
+        .imbalance-card .warn { border-left-color: #f59e0b; }
+        .imbalance-card .good { border-left-color: #22c55e; }
+        .accessory-card { background: #dbeafe; border-radius: 12px; padding: 12px; margin-top: 12px; border-left: 4px solid #1d4ed8; }
+        .accessory-card .title { font-weight: 700; color: #1e3a5f; }
+        .accessory-card .detail { font-size: 13px; color: #334155; margin-top: 4px; }
+        .accessory-card .highlight { color: #0f172a; font-weight: 600; }
+        .accessory-desc { font-size: 12px; color: #64748b; margin-top: 2px; font-style: italic; }
+
+        /* ====== CHRONOMÈTRE ====== */
+        .timer-container { display: flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 4px 12px 4px 8px; border-radius: 30px; border: 1px solid #e2e8f0; }
+        .timer-display { font-family: 'Courier New', monospace; font-size: 18px; font-weight: 700; color: #1e293b; min-width: 70px; text-align: center; }
+        .timer-display.blink { animation: blink 0.5s ease-in-out infinite alternate; }
+        @keyframes blink { 0% { opacity: 1; } 100% { opacity: 0.3; } }
+        .timer-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 2px 4px; color: #64748b; transition: 0.2s; }
+        .timer-btn:hover { color: #1e3a5f; }
+        .timer-btn.reset { color: #dc2626; }
+        .timer-btn.reset:hover { color: #b91c1c; }
+        .gorilla-timer { transition: all 0.3s; }
+        .gorilla-rage { animation: rage 0.2s infinite alternate; }
+        @keyframes rage { 0% { transform: scale(1) rotate(-3deg); } 100% { transform: scale(1.15) rotate(3deg); } }
+        .test-timer-info { font-size: 12px; color: #1d4ed8; margin-top: 4px; }
+        .no-margin { margin: 0; }
     </style>
 </head>
 <body>
@@ -119,11 +143,21 @@
             <button class="settings-btn" id="logToggle" title="Journal 📋">📋</button>
             <button class="settings-btn" id="profileToggle" title="Changer de profil">👤</button>
             <button class="settings-btn" id="test1rmGlobalBtn" title="Test 1RM">⚡</button>
-            <button class="settings-btn" id="deloadBtn" title="Deload" style="color:#d97706;">🔽</button>
+            <button class="settings-btn" id="deloadBtn" title="Gayload" style="color:#d97706;">🔽</button>
         </div>
     </div>
 
-    <!-- ÉCRAN SUIVI (inchangé) -->
+    <!-- CHRONO + GORILLE (UN SEUL, SANS BOUTON 🧪) -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);">
+        <div id="gorillaTimer" class="gorilla-walk gorilla-timer" style="font-size: 48px; margin: 0;">🦍</div>
+        <div class="timer-container">
+            <span id="timerDisplay" class="timer-display">00:00</span>
+            <button class="timer-btn" id="timerPlayBtn" title="Démarrer / Pause">▶️</button>
+            <button class="timer-btn reset" id="timerResetBtn" title="Remettre à zéro">⟲</button>
+        </div>
+    </div>
+
+    <!-- ÉCRAN SUIVI -->
     <div id="chartScreen" class="hidden">
         <h2 style="margin-bottom:12px;">📊 Suivi de progression (1RM)</h2>
         <div class="chart-selectors">
@@ -143,13 +177,15 @@
             <thead><tr><th>Lift / Gabarit</th><th>Valeur</th><th>Ratio</th><th>Niveau</th></tr></thead>
             <tbody id="levelTableBody"></tbody>
         </table>
+        <div id="imbalanceContainer"></div>
+        <div id="accessoryContainer"></div>
         <div style="margin-top:12px; background:#f0f2f5; padding:10px; border-radius:12px; font-size:12px;">
             <strong>📋 Paliers de ratio (poids soulevé / poids de corps)</strong><br>
             <em>🧒 Gay → 🧚 Fillette → 🤏 Petit zizi → 🗿 Sigma → 💪 Maxi Testo → 🦍 Gorille</em><br><br>
             <strong>Squat :</strong> &lt;2.0 / 2.0-2.2 / 2.2-2.4 / 2.4-2.6 / 2.6-2.8 / ≥2.8<br>
             <strong>Deadlift :</strong> &lt;2.5 / 2.5-2.7 / 2.7-2.9 / 2.9-3.1 / 3.1-3.3 / ≥3.3<br>
-            <strong>OHP :</strong> &lt;1.0 / 1.0-1.1 / 1.1-1.2 / 1.2-1.3 / 1.3-1.4 / ≥1.4<br>
-            <strong>Row :</strong> &lt;2.0 / 2.0-2.2 / 2.2-2.4 / 2.4-2.6 / 2.6-2.8 / ≥2.8<br>
+            <strong>OHP :</strong> &lt;1.0 / 1.0-1.1 / 1.1-1.2 / 1.2-1.3 / 1.3-1.5 / ≥1.5<br>
+            <strong>Row :</strong> &lt;1.2 / 1.2-1.4 / 1.4-1.6 / 1.6-1.8 / 1.8-2.0 / ≥2.0<br>
             <strong>Gabarit (poids / taille³) :</strong> &lt;14.5 / 14.5-15.5 / 15.5-16.5 / 16.5-17.5 / 17.5-18.5 / ≥18.5<br>
             <span style="color:#b45309;">🦍 Gorille uniquement si tous les lifts atteignent les ratios ultimes ET que le gabarit est ≥18.5.</span>
             <div style="margin-top:8px; font-style:italic; color:#7c3aed;">💀 Le squat, c'est le roi. Un vrai homme le pratique pieds au sol, comme un Gorille.</div>
@@ -157,14 +193,14 @@
         <button class="btn-secondary" id="closeChartBtn">Fermer</button>
     </div>
 
-    <!-- ÉCRAN JOURNAL (Training Log) -->
+    <!-- ÉCRAN JOURNAL -->
     <div id="logScreen" class="hidden">
         <h2 style="margin-bottom:12px;">📋 Journal d'entraînement</h2>
         <div id="logContainer"></div>
         <button class="btn-secondary" id="closeLogBtn">Fermer</button>
     </div>
 
-    <!-- GESTION DES PROFILS (inchangé) -->
+    <!-- GESTION DES PROFILS -->
     <div id="profileScreen" class="hidden">
         <h2 style="margin-bottom:16px;">👤 Vos profils</h2>
         <div id="profileList" class="profile-list"></div>
@@ -177,7 +213,7 @@
         <p class="info-text" style="margin-top:12px;">Données locales. Exportez pour sauvegarder.</p>
     </div>
 
-    <!-- ÉDITION PROFIL (inchangé) -->
+    <!-- ÉDITION PROFIL -->
     <div id="editProfileScreen" class="hidden">
         <h2 id="editProfileTitle" style="margin-bottom:16px;">Créer un profil</h2>
         <div class="input-group">
@@ -235,11 +271,10 @@
     <!-- SÉANCE DU JOUR -->
     <div id="workoutScreen" class="hidden">
         <div id="sessionInfo" style="margin-bottom:16px;">
-            <div id="gorillaWalk" class="gorilla-walk">🦍</div>
             <p style="font-size:14px;color:#475569; text-align:center; margin-top:4px;" id="sessionDate">Le gorille arrive...</p>
             <div id="stagnationAlert" class="hidden stagnation-alert">
                 <span id="stagnationMsg"></span>
-                <button class="btn-deload" id="acceptDeloadBtn">✅ Accepter le deload</button>
+                <button class="btn-deload" id="acceptDeloadBtn">✅ Accepter le gayload</button>
                 <button class="btn-secondary" id="declineDeloadBtn" style="margin-top:4px;">Ignorer</button>
             </div>
             <div id="test1rmBox" class="hidden test-1rm-box">
@@ -250,10 +285,11 @@
                     <select id="test1rmResult"><option value="true">✅ Oui</option><option value="false">❌ Non</option></select>
                 </div>
                 <button class="btn-primary" id="submitTest1rm">Valider le test</button>
+                <div class="test-timer-info">⏱️ Chrono de 7 min lancé automatiquement</div>
             </div>
             <div id="deloadInfo" class="hidden deload-info">
-                <strong>🔽 Deload actif</strong> – Les 3 prochaines séances (jusqu'à <span id="deloadEndDate"></span>) verront les charges réduites de 20% et le volume allégé. <span class="trash-talk">T'es sûr, gros gay ?</span>
-                <button class="btn-secondary" id="cancelDeloadBtn" style="margin-top:4px;">Annuler le deload</button>
+                <strong>🔽 Gayload actif</strong> – Les 3 prochaines séances (jusqu'à <span id="deloadEndDate"></span>) verront les charges réduites de 20% et le volume allégé. <span class="trash-talk">T'es sûr, gros gay ?</span>
+                <button class="btn-secondary" id="cancelDeloadBtn" style="margin-top:4px;">Annuler le gayload</button>
             </div>
         </div>
         <div id="exerciseList"></div>
@@ -276,7 +312,158 @@
 
 <script>
     // ======================================================================
-    // PALIERS DE NIVEAU (inchangé)
+    // CHRONOMÈTRE PRINCIPAL (bip long)
+    // ======================================================================
+    let timerSeconds = 0;
+    let timerInterval = null;
+    let isTimerRunning = false;
+    let currentSession = null;
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerPlayBtn = document.getElementById('timerPlayBtn');
+    const timerResetBtn = document.getElementById('timerResetBtn');
+    const gorillaTimer = document.getElementById('gorillaTimer');
+
+    function playBeepLong(frequency = 800, duration = 200, count = 5, pause = 300) {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let i = 0;
+            function beep() {
+                if (i >= count) return;
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration / 1000);
+                i++;
+                setTimeout(beep, pause + duration);
+            }
+            beep();
+        } catch(e) { /* fallback silencieux */ }
+    }
+
+    function updateTimerDisplay() {
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (timerSeconds >= 180) {
+            timerDisplay.classList.add('blink');
+            if (timerSeconds === 180) playBeepLong(1000, 200, 5, 300);
+        } else {
+            timerDisplay.classList.remove('blink');
+        }
+        if (timerSeconds >= 300) {
+            if (timerSeconds === 300) playBeepLong(1200, 250, 8, 300);
+            gorillaTimer.classList.remove('gorilla-walk', 'gorilla-chest', 'gorilla-timer');
+            gorillaTimer.classList.add('gorilla-rage');
+        } else {
+            gorillaTimer.classList.remove('gorilla-rage');
+            if (!gorillaTimer.classList.contains('gorilla-walk') && !gorillaTimer.classList.contains('gorilla-chest')) {
+                gorillaTimer.classList.add('gorilla-walk');
+            }
+        }
+    }
+
+    function toggleTimer() {
+        if (isTimerRunning) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerRunning = false;
+            timerPlayBtn.textContent = '▶️';
+        } else {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+            isTimerRunning = true;
+            timerPlayBtn.textContent = '⏸️';
+        }
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isTimerRunning = false;
+        timerSeconds = 0;
+        timerPlayBtn.textContent = '▶️';
+        updateTimerDisplay();
+        gorillaTimer.classList.remove('gorilla-rage');
+        gorillaTimer.classList.add('gorilla-walk');
+        timerDisplay.classList.remove('blink');
+    }
+
+    timerPlayBtn.addEventListener('click', toggleTimer);
+    timerResetBtn.addEventListener('click', resetTimer);
+    updateTimerDisplay();
+
+    // ======================================================================
+    // CHRONO TEST 1RM (7 min) - lancé automatiquement par le test 1RM
+    // ======================================================================
+    let testTimerSeconds = 0;
+    let testTimerInterval = null;
+    let isTestTimerRunning = false;
+
+    function startTestTimer() {
+        if (isTestTimerRunning) {
+            showToast('⏱️ Chrono 1RM déjà en cours');
+            return;
+        }
+        if (isTimerRunning) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerRunning = false;
+            timerPlayBtn.textContent = '▶️';
+        }
+        resetTimer();
+        testTimerSeconds = 0;
+        isTestTimerRunning = true;
+        gorillaTimer.classList.remove('gorilla-walk', 'gorilla-chest');
+        gorillaTimer.classList.add('gorilla-rage');
+        testTimerInterval = setInterval(() => {
+            testTimerSeconds++;
+            if (testTimerSeconds === 420) {
+                playBeepLong(1500, 300, 6, 300);
+                playBeepLong(1800, 300, 6, 300);
+                playBeepLong(2000, 400, 8, 300);
+                showToast('⏰ 7 minutes ! Fin du test !');
+                clearInterval(testTimerInterval);
+                testTimerInterval = null;
+                isTestTimerRunning = false;
+                gorillaTimer.classList.remove('gorilla-rage');
+                gorillaTimer.classList.add('gorilla-walk');
+            }
+        }, 1000);
+        showToast('🧪 Chrono 1RM lancé (7 min)');
+    }
+
+    function stopTestTimer() {
+        if (testTimerInterval) {
+            clearInterval(testTimerInterval);
+            testTimerInterval = null;
+            isTestTimerRunning = false;
+            gorillaTimer.classList.remove('gorilla-rage');
+            gorillaTimer.classList.add('gorilla-walk');
+        }
+    }
+
+    // ======================================================================
+    // RÉINITIALISATION DU CHRONO AU CHANGEMENT DE SÉANCE
+    // ======================================================================
+    function checkSessionChange(newSession) {
+        if (currentSession !== null && currentSession !== newSession) {
+            resetTimer();
+            stopTestTimer();
+        }
+        currentSession = newSession;
+    }
+
+    // ======================================================================
+    // PALIERS DE NIVEAU
     // ======================================================================
     const levelNames = [
         { name: 'Gay', emoji: '🧒', class: 'level-gay' },
@@ -290,8 +477,8 @@
     const liftMinRatios = {
         squat:    [2.0, 2.2, 2.4, 2.6, 2.8],
         deadlift: [2.5, 2.7, 2.9, 3.1, 3.3],
-        ohp:      [1.0, 1.1, 1.2, 1.3, 1.4],
-        row:      [2.0, 2.2, 2.4, 2.6, 2.8]
+        ohp:      [1.0, 1.1, 1.2, 1.3, 1.5],
+        row:      [1.2, 1.4, 1.6, 1.8, 2.0]
     };
 
     const shapeMinRatios = [14.5, 15.5, 16.5, 17.5, 18.5];
@@ -333,11 +520,137 @@
     }
 
     // ======================================================================
-    // GESTION DES PROFILS
+    // ANALYSE DES DÉSÉQUILIBRES (avec explications claires)
     // ======================================================================
-    const PROFILES_KEY = 'force_profiles_v22';
-    const CURRENT_PROFILE_KEY = 'force_current_profile_v22';
-    const UNDO_KEY = 'force_undo_backup_v22';
+    function analyzeImbalances(prs) {
+        const s = prs.squat || 0;
+        const d = prs.deadlift || 0;
+        const o = prs.ohp || 0;
+        const r = prs.row || 0;
+
+        const results = [];
+        const accessories = [];
+
+        if (s > 0 && d > 0) {
+            const ratio = d / s;
+            if (ratio > 1.25) {
+                results.push({ type: 'bad', msg: '💀 Ton deadlift écrase ton squat (ratio '+ratio.toFixed(2)+'). Ajoute du squat stiletto.' });
+                accessories.push({ key: 'stiletto', reason: '🔧 Rattrapage : Squat trop faible → Stiletto pour gonfler les quads.' });
+            } else if (ratio < 0.95) {
+                results.push({ type: 'bad', msg: '💀 Ton deadlift est à la ramasse (ratio '+ratio.toFixed(2)+'). Ajoute du RDL.' });
+                accessories.push({ key: 'rdl', reason: '🔧 Rattrapage : Deadlift trop faible → RDL pour muscler les ischios.' });
+            }
+        }
+
+        if (s > 0 && o > 0) {
+            const ratio = s / o;
+            if (ratio > 2.5) {
+                results.push({ type: 'bad', msg: '💪 T\'as un squat de gorille mais des épaules de crevette (ratio '+ratio.toFixed(2)+'). Ajoute du BTN Press.' });
+                accessories.push({ key: 'btn', reason: '🔧 Rattrapage : OHP trop faible → BTN Press pour des épaules de déménageur.' });
+            } else if (ratio < 1.6) {
+                results.push({ type: 'bad', msg: '💪 T\'as des épaules de gorille mais des jambes de coq (ratio '+ratio.toFixed(2)+'). Ajoute du squat stiletto.' });
+                accessories.push({ key: 'stiletto', reason: '🔧 Rattrapage : Squat trop faible → Stiletto pour des quads de bûcheron.' });
+            }
+        }
+
+        if (s > 0 && r > 0) {
+            const ratio = s / r;
+            if (ratio > 1.4) {
+                results.push({ type: 'bad', msg: '🦍 T\'as un squat de mammouth mais un dos de crevette (ratio '+ratio.toFixed(2)+'). Ajoute des tractions lestées.' });
+                accessories.push({ key: 'tractions', reason: '🔧 Rattrapage : Row trop faible → Tractions lestées pour un dos de gorille.' });
+            } else if (ratio < 1.0) {
+                results.push({ type: 'bad', msg: '🦍 T\'as un dos de baraqué mais des jambes de coq (ratio '+ratio.toFixed(2)+'). Ajoute du squat stiletto.' });
+                accessories.push({ key: 'stiletto', reason: '🔧 Rattrapage : Squat trop faible → Stiletto pour des jambes de titan.' });
+            }
+        }
+
+        // ===> DIAGNOSTIC CLARIFIÉ POUR DEADLIFT VS ROW <===
+        if (d > 0 && r > 0) {
+            const ratio = d / r;
+            if (ratio > 1.6) {
+                results.push({
+                    type: 'bad',
+                    msg: '🦍 T\'as un deadlift de géant mais un row de crevette (ratio '+ratio.toFixed(2)+'). EXPLICATION : un upper back faible ne transmet pas la force des jambes. La charge dissipe dans la colonne, le dos s\'arrondit, et tu tires avec les érecteurs du rachis (lower back) au lieu de pousser avec les jambes. Résultat : tu deviens un tireur de dos, pas un pousseur de jambes. Ajoute des tractions lestées pour verrouiller ton dos.'
+                });
+                accessories.push({ key: 'tractions', reason: '🔧 Rattrapage : Upper back faible → Tractions lestées pour un dos qui verrouille et transmet la force.' });
+            } else if (ratio < 1.2) {
+                results.push({
+                    type: 'bad',
+                    msg: '🦍 T\'as un row de gorille mais un deadlift de fillette (ratio '+ratio.toFixed(2)+'). Tu tires comme un sauvage, mais tu pousses comme une lopette. Ajoute du RDL pour muscler ta chaîne postérieure et apprendre à pousser avec les jambes.'
+                });
+                accessories.push({ key: 'rdl', reason: '🔧 Rattrapage : Deadlift trop faible → RDL pour muscler la chaîne postérieure.' });
+            }
+        }
+
+        if (o > 0 && r > 0) {
+            const ratio = o / r;
+            if (ratio < 0.5) {
+                results.push({ type: 'warn', msg: '⚡ T\'as un row de bœuf mais un OHP de rougette (ratio '+ratio.toFixed(2)+'). Ajoute du BTN Press.' });
+                accessories.push({ key: 'btn', reason: '🔧 Rattrapage : OHP trop faible → BTN Press pour des épaules de déménageur.' });
+            } else if (ratio > 0.75) {
+                results.push({ type: 'warn', msg: '⚡ T\'as un OHP de baraqué mais un row de fillette (ratio '+ratio.toFixed(2)+'). Ajoute des tractions lestées.' });
+                accessories.push({ key: 'tractions', reason: '🔧 Rattrapage : Row trop faible → Tractions lestées pour un dos de gorille.' });
+            }
+        }
+
+        const uniqueMap = {};
+        accessories.forEach(a => {
+            if (!uniqueMap[a.key]) uniqueMap[a.key] = a;
+        });
+        return { results, accessories: Object.values(uniqueMap) };
+    }
+
+    function renderImbalancesAndAccessories(state) {
+        const container = document.getElementById('imbalanceContainer');
+        const accContainer = document.getElementById('accessoryContainer');
+        container.innerHTML = '';
+        accContainer.innerHTML = '';
+
+        const prs = state.prs || {};
+        prs.weight = state.weight || 85;
+        const analysis = analyzeImbalances(prs);
+
+        if (analysis.results.length === 0) {
+            container.innerHTML = '<div class="info-text">⚖️ Tous tes lifts sont équilibrés. Continue comme ça, gorille !</div>';
+            return;
+        }
+
+        let html = '<div style="margin-top:12px;"><strong>⚠️ Déséquilibres détectés</strong></div>';
+        analysis.results.forEach(r => {
+            const cls = r.type === 'bad' ? 'bad' : 'warn';
+            html += `<div class="imbalance-card ${cls}">${r.msg}</div>`;
+        });
+        container.innerHTML = html;
+
+        if (analysis.accessories.length > 0) {
+            const accWeights = state.accessoryWeights || { tractions: 20, rdl: 100, btn: 40, stiletto: 100 };
+            let accHtml = '<div style="margin-top:16px;"><strong>🔧 Accessoires recommandés (2× échec, seuil > 15 reps total)</strong></div>';
+            analysis.accessories.forEach(acc => {
+                let name = '', target = '', weight = 0;
+                if (acc.key === 'tractions') { name = 'Tractions lestées'; target = 'dos'; weight = accWeights.tractions; }
+                else if (acc.key === 'rdl') { name = 'Soulevé de terre roumain (RDL)'; target = 'jambes (ischios)'; weight = accWeights.rdl; }
+                else if (acc.key === 'btn') { name = 'BTN Press'; target = 'épaules'; weight = accWeights.btn; }
+                else if (acc.key === 'stiletto') { name = 'Squat Stiletto'; target = 'jambes (quads)'; weight = accWeights.stiletto; }
+                accHtml += `
+                    <div class="accessory-card">
+                        <div class="title">${name}</div>
+                        <div class="detail">🎯 Cible : ${target}</div>
+                        <div class="detail">${acc.reason}</div>
+                        <div class="detail" style="color:#1d4ed8; font-weight:600; margin-top:4px;">Format : 2× échec @ ${weight} kg (progression si total > 15 reps)</div>
+                    </div>
+                `;
+            });
+            accHtml += `<div class="info-text" style="margin-top:8px;">Ces accessoires s’ajoutent en fin de séance, sauf s’ils sont déjà présents ce jour‑là.</div>`;
+            accContainer.innerHTML = accHtml;
+        }
+    }
+
+    // ======================================================================
+    // GESTION DES PROFILS (inchangé)
+    // ======================================================================
+    const PROFILES_KEY = 'force_profiles_v33';
+    const CURRENT_PROFILE_KEY = 'force_current_profile_v33';
+    const UNDO_KEY = 'force_undo_backup_v33';
     const INTRO_SHOWN_KEY = 'force_intro_shown_v3';
 
     function getProfiles() {
@@ -354,6 +667,11 @@
     function round2_5(v) { return Math.round(v / 2.5) * 2.5; }
 
     function getDefaultProfile(prs) {
+        const bw = prs.weight || 140;
+        const row = prs.row || 220;
+        let initialTractions = round2_5(row * 0.4 - bw);
+        if (initialTractions < 0) initialTractions = 0;
+
         return {
             prs: prs || { squat: 300, ohp: 170, row: 220, deadlift: 400 },
             currentSession: 'A',
@@ -362,7 +680,9 @@
             weightHistory: [],
             topSetHistory: { squat: [], ohp: [], row: [] },
             fiveRepsHistory: { ohp: [], row: [], squat: [] },
-            twoSetsHistory: { row_echec: [], btn_echec: [], stiletto_echec: [], squat_backoff: [], row_backoff: [], ohp_backoff: [] },
+            twoSetsHistory: { row_echec: [], btn_echec: [], stiletto_echec: [], row_backoff: [] },
+            singleSetHistory: { squat_backoff: [], ohp_backoff: [] },
+            accessoryHistory: { tractions: [], rdl: [], btn: [], stiletto: [] },
             dlCycleCount: 0,
             rmHistory: { squat: [], ohp: [], row: [], deadlift: [] },
             rmDates: [],
@@ -373,7 +693,13 @@
             rowNonStrict: false,
             height: 190,
             weight: 140,
-            trainingLog: []  // ← INCLUS DANS L'EXPORT
+            trainingLog: [],
+            accessoryWeights: {
+                tractions: initialTractions,
+                rdl: 100,
+                btn: 40,
+                stiletto: 100
+            }
         };
     }
 
@@ -393,23 +719,20 @@
         ];
 
         return {
-            // Séance A
             A_squat_3x3: round2_5(prs.squat * 0.815),
             A_squat_backoff: round2_5(prs.squat * 0.71),
             A_ohp_5x5: round2_5(prs.ohp * 0.665),
             A_row_echec: round2_5(prs.row * 0.72),
 
-            // Séance B
             B_squat_5x5: round2_5(prs.squat * 0.75),
             B_btn_echec: round2_5(prs.ohp * 0.65),
             B_row_3x3: round2_5(prs.row * 0.83),
             B_row_3x3_non_strict: round2_5(prs.row * 0.91),
             B_row_backoff: round2_5(prs.row * 0.72),
 
-            // Séance C
             C_stiletto_echec: round2_5(prs.squat * 0.55),
             C_ohp_3x3: round2_5(prs.ohp * 0.80),
-            C_ohp_backoff_btn: round2_5(prs.ohp * 0.55),
+            C_ohp_backoff: round2_5(prs.ohp * 0.55),
             C_row_5x5: round2_5(prs.row * 0.775),
 
             dl_main,
@@ -423,7 +746,7 @@
     }
 
     // ======================================================================
-    // LOGIQUE PROGRESSION (NOUVELLE STRUCTURE)
+    // LOGIQUE PROGRESSION (inchangé)
     // ======================================================================
     function applyProgression(state, results) {
         const w = state.weights;
@@ -438,7 +761,7 @@
                     state.weights = state.originalWeights;
                     state.originalWeights = null;
                 }
-                showToast('🔽 Deload terminé ! Les charges reviennent à la normale.');
+                showToast('🔽 Gayload terminé ! Les charges reviennent à la normale.');
             }
             if (session === 'A') state.currentSession = 'B';
             else if (session === 'B') state.currentSession = 'C';
@@ -455,43 +778,65 @@
             }
         }
 
+        function processAccessories(prefix) {
+            const accMap = {
+                tractions: { key: 'tractions', weightKey: 'tractions', threshold: 15 },
+                rdl: { key: 'rdl', weightKey: 'rdl', threshold: 15 },
+                btn: { key: 'btn', weightKey: 'btn', threshold: 15 },
+                stiletto: { key: 'stiletto', weightKey: 'stiletto', threshold: 15 }
+            };
+            for (const [accKey, config] of Object.entries(accMap)) {
+                const id = prefix + '_' + accKey + '_total';
+                const total = parseInt(results[id]) || 0;
+                if (total > 0) {
+                    state.accessoryHistory[config.key].push(total);
+                    if (total > config.threshold) {
+                        state.accessoryWeights[config.weightKey] = r(state.accessoryWeights[config.weightKey] + 2.5);
+                    }
+                }
+            }
+        }
+
         if (session === 'A') {
-            // Row 2× échec
             const rowTotal = parseInt(results.A_row_total) || 0;
             state.twoSetsHistory.row_echec.push(rowTotal);
             if (rowTotal > 12) w.A_row_echec = r(w.A_row_echec + 2.5);
 
-            // Squat 3×3
             let squatSuccess = results.A_squat_3x3 === true;
             if (squatSuccess) { w.A_squat_3x3 = r(w.A_squat_3x3 + 2.5); state.topSetHistory.squat.push(true); }
             else { state.topSetHistory.squat.push(false); }
 
-            // Squat backoff (2 sets)
             const backTotal = parseInt(results.A_squat_backoff_total) || 0;
-            state.twoSetsHistory.squat_backoff.push(backTotal);
-            if (backTotal > 12) w.A_squat_backoff = r(w.A_squat_backoff + 2.5);
+            state.singleSetHistory.squat_backoff.push(backTotal);
+            if (backTotal > 10) w.A_squat_backoff = r(w.A_squat_backoff + 2.5);
 
-            // OHP 5×5
             const ohpTotal = parseInt(results.A_ohp_5x5_total) || 0;
             state.fiveRepsHistory.ohp.push(ohpTotal);
             if (ohpTotal >= 25) w.A_ohp_5x5 = r(w.A_ohp_5x5 + 2.5);
 
-            // Journal
+            processAccessories('A');
+
             const logEntry = {
                 date: new Date().toISOString().slice(0,10),
                 session: 'A',
                 exercises: [
                     { name: 'Row déficit', type: '2× échec', weight: w.A_row_echec, reps: rowTotal + ' reps' },
                     { name: 'Squat LB', type: '3×3 Top Set', weight: w.A_squat_3x3, reps: (results.A_squat_3x3 === true ? '3 3 3' : '3 3 2') },
-                    { name: 'Squat LB', type: 'Back-off 2× échec', weight: w.A_squat_backoff, reps: backTotal + ' reps' },
+                    { name: 'Squat LB', type: 'Back-off 1× échec', weight: w.A_squat_backoff, reps: backTotal + ' reps' },
                     { name: 'OHP', type: '5×5', weight: w.A_ohp_5x5, reps: ohpTotal.toString() }
                 ]
             };
+            const accNames = { tractions: 'Tractions lestées', rdl: 'RDL', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
+            for (const [key, name] of Object.entries(accNames)) {
+                const total = parseInt(results['A_' + key + '_total']) || 0;
+                if (total > 0) {
+                    logEntry.exercises.push({ name: name, type: '2× échec', weight: state.accessoryWeights[key], reps: total + ' reps' });
+                }
+            }
             if (!state.trainingLog) state.trainingLog = [];
             state.trainingLog.push(logEntry);
         }
         else if (session === 'B') {
-            // Row 3×3 + backoff
             let rowKey = state.rowNonStrict ? 'B_row_3x3_non_strict' : 'B_row_3x3';
             let rowSuccess = results.B_row_3x3 === true;
             if (rowSuccess) { w[rowKey] = r(w[rowKey] + 2.5); state.topSetHistory.row.push(true); }
@@ -501,17 +846,16 @@
             state.twoSetsHistory.row_backoff.push(backTotal);
             if (backTotal > 12) w.B_row_backoff = r(w.B_row_backoff + 2.5);
 
-            // Squat 5×5
             const squatTotal = parseInt(results.B_squat_5x5_total) || 0;
             state.fiveRepsHistory.squat.push(squatTotal);
             if (squatTotal >= 25) w.B_squat_5x5 = r(w.B_squat_5x5 + 2.5);
 
-            // BTN 2× échec
             const btnTotal = parseInt(results.B_btn_total) || 0;
             state.twoSetsHistory.btn_echec.push(btnTotal);
             if (btnTotal > 12) w.B_btn_echec = r(w.B_btn_echec + 2.5);
 
-            // Journal
+            processAccessories('B');
+
             const logEntry = {
                 date: new Date().toISOString().slice(0,10),
                 session: 'B',
@@ -522,16 +866,21 @@
                     { name: 'BTN Press', type: '2× échec', weight: w.B_btn_echec, reps: btnTotal + ' reps' }
                 ]
             };
+            const accNames = { tractions: 'Tractions lestées', rdl: 'RDL', stiletto: 'Squat Stiletto' };
+            for (const [key, name] of Object.entries(accNames)) {
+                const total = parseInt(results['B_' + key + '_total']) || 0;
+                if (total > 0) {
+                    logEntry.exercises.push({ name: name, type: '2× échec', weight: state.accessoryWeights[key], reps: total + ' reps' });
+                }
+            }
             if (!state.trainingLog) state.trainingLog = [];
             state.trainingLog.push(logEntry);
         }
         else if (session === 'C') {
-            // Row 5×5
             const rowTotal = parseInt(results.C_row_5x5_total) || 0;
             state.fiveRepsHistory.row.push(rowTotal);
             if (rowTotal >= 25) w.C_row_5x5 = r(w.C_row_5x5 + 2.5);
 
-            // Deadlift
             let dlCompleted = results.C_deadlift_complete === true;
             let dlBackTotal = parseInt(results.C_deadlift_back_total) || 0;
             let week = state.dlWeek;
@@ -545,21 +894,20 @@
                 else { state.dlWeek = 0; state.dlCycleCount = (state.dlCycleCount || 0) + 1; w.dl_main = w.dl_main.map(v => r(v + 2.5)); w.dl_back = w.dl_back.map(v => v === 0 ? 0 : r(v + 2.5)); }
             }
 
-            // OHP 3×3 + backoff BTN
             let ohpSuccess = results.C_ohp_3x3 === true;
             if (ohpSuccess) { w.C_ohp_3x3 = r(w.C_ohp_3x3 + 2.5); state.topSetHistory.ohp.push(true); }
             else { state.topSetHistory.ohp.push(false); }
 
             const ohpBackTotal = parseInt(results.C_ohp_backoff_total) || 0;
-            state.twoSetsHistory.ohp_backoff.push(ohpBackTotal);
-            if (ohpBackTotal > 12) w.C_ohp_backoff_btn = r(w.C_ohp_backoff_btn + 2.5);
+            state.singleSetHistory.ohp_backoff.push(ohpBackTotal);
+            if (ohpBackTotal > 10) w.C_ohp_backoff = r(w.C_ohp_backoff + 2.5);
 
-            // Stiletto 2× échec
             const stilettoTotal = parseInt(results.C_stiletto_total) || 0;
             state.twoSetsHistory.stiletto_echec.push(stilettoTotal);
             if (stilettoTotal > 12) w.C_stiletto_echec = r(w.C_stiletto_echec + 2.5);
 
-            // Journal
+            processAccessories('C');
+
             const dlMain = w.dl_main[state.dlWeek] || 0;
             const dlBack = w.dl_back[state.dlWeek] || 0;
             const struct = ['3×5', '4×5', '3×3 + backoff', '3×2 + backoff'][state.dlWeek] || '3×5';
@@ -570,10 +918,17 @@
                     { name: 'Row déficit', type: '5×5', weight: w.C_row_5x5, reps: rowTotal.toString() },
                     { name: 'Deadlift', type: struct, weight: dlMain, reps: (dlBack > 0 ? '(+ backoff '+dlBack+' kg)' : '') },
                     { name: 'OHP', type: '3×3 Top Set', weight: w.C_ohp_3x3, reps: (results.C_ohp_3x3 === true ? '3 3 3' : '3 3 2') },
-                    { name: 'BTN Press', type: 'Back-off 2× échec', weight: w.C_ohp_backoff_btn, reps: ohpBackTotal + ' reps' },
+                    { name: 'OHP', type: 'Back-off 1× échec', weight: w.C_ohp_backoff, reps: ohpBackTotal + ' reps' },
                     { name: 'Squat Stiletto', type: '2× échec', weight: w.C_stiletto_echec, reps: stilettoTotal + ' reps' }
                 ]
             };
+            const accNames = { tractions: 'Tractions lestées', rdl: 'RDL', btn: 'BTN Press' };
+            for (const [key, name] of Object.entries(accNames)) {
+                const total = parseInt(results['C_' + key + '_total']) || 0;
+                if (total > 0) {
+                    logEntry.exercises.push({ name: name, type: '2× échec', weight: state.accessoryWeights[key], reps: total + ' reps' });
+                }
+            }
             if (!state.trainingLog) state.trainingLog = [];
             state.trainingLog.push(logEntry);
         }
@@ -604,11 +959,18 @@
             if (Array.isArray(state.weights[key])) state.weights[key] = state.weights[key].map(v => v > 0 ? reduce(v) : 0);
             else state.weights[key] = state.weights[key] > 0 ? reduce(state.weights[key]) : 0;
         }
+        if (state.accessoryWeights) {
+            state.originalAccessoryWeights = JSON.parse(JSON.stringify(state.accessoryWeights));
+            for (let key in state.accessoryWeights) {
+                state.accessoryWeights[key] = reduce(state.accessoryWeights[key]);
+            }
+        }
         state.deloadActive = true;
         state.deloadSessionsRemaining = 3;
         state.topSetHistory = { squat: [], ohp: [], row: [] };
         state.fiveRepsHistory = { ohp: [], row: [], squat: [] };
-        state.twoSetsHistory = { row_echec: [], btn_echec: [], stiletto_echec: [], squat_backoff: [], row_backoff: [], ohp_backoff: [] };
+        state.twoSetsHistory = { row_echec: [], btn_echec: [], stiletto_echec: [], row_backoff: [] };
+        state.singleSetHistory = { squat_backoff: [], ohp_backoff: [] };
         return state;
     }
 
@@ -720,6 +1082,7 @@
         }
 
         updateLevelTable(state);
+        renderImbalancesAndAccessories(state);
     }
 
     function updateLevelTable(state) {
@@ -758,7 +1121,7 @@
     }
 
     // ======================================================================
-    // RENDU DU JOURNAL
+    // RENDU DU JOURNAL (inchangé)
     // ======================================================================
     function renderLog(state) {
         const container = document.getElementById('logContainer');
@@ -781,7 +1144,7 @@
     }
 
     // ======================================================================
-    // RENDU DE LA SÉANCE (NOUVELLE STRUCTURE)
+    // RENDU DE LA SÉANCE (inchangé)
     // ======================================================================
     function renderWorkout(state) {
         if (!state) return;
@@ -797,32 +1160,30 @@
 
         if (session === 'A') {
             exercises = [
-                { title: 'Row déficit', detail: `2× échec @ ${w.A_row_echec} kg` },
                 { title: 'Squat (Low-bar)', detail: `3×3 Top Set @ ${w.A_squat_3x3} kg` },
-                { title: 'Squat (Low-bar)', detail: `Back-off 2× échec @ ${w.A_squat_backoff} kg` },
-                { title: 'OHP (classique)', detail: `5×5 @ ${w.A_ohp_5x5} kg` }
+                { title: 'Squat (Low-bar)', detail: `Back-off 1× échec @ ${w.A_squat_backoff} kg` },
+                { title: 'OHP (classique)', detail: `5×5 @ ${w.A_ohp_5x5} kg` },
+                { title: 'Row déficit', detail: `2× échec @ ${w.A_row_echec} kg` }
             ];
         } else if (session === 'B') {
             exercises = [
-                { title: 'Row', detail: `3×3 Top Set ${state.rowNonStrict ? '(non strict)' : '(déficit)'} @ ${row3x3Weight} kg` },
-                { title: 'Row déficit', detail: `Back-off 2× échec @ ${w.B_row_backoff} kg` },
                 { title: 'Squat (Low-bar)', detail: `5×5 @ ${w.B_squat_5x5} kg` },
-                { title: 'BTN Press', detail: `2× échec @ ${w.B_btn_echec} kg` }
+                { title: 'BTN Press', detail: `2× échec @ ${w.B_btn_echec} kg` },
+                { title: 'Row', detail: `3×3 Top Set ${state.rowNonStrict ? '(non strict)' : '(déficit)'} @ ${row3x3Weight} kg` },
+                { title: 'Row déficit', detail: `Back-off 2× échec @ ${w.B_row_backoff} kg` }
             ];
         } else if (session === 'C') {
             const dlMain = w.dl_main[dlWeek] || 0;
             const dlBack = w.dl_back[dlWeek] || 0;
             const struct = ['3×5', '4×5', '3×3 + backoff', '3×2 + backoff'][dlWeek] || '3×5';
             exercises = [
-                { title: 'Row déficit', detail: `5×5 @ ${w.C_row_5x5} kg` },
-                { title: 'Deadlift', detail: `${struct} @ ${dlMain} kg${dlBack>0 ? ' (+ backoff '+dlBack+' kg)' : ''}` },
+                { title: 'Squat Stiletto', detail: `2× échec @ ${w.C_stiletto_echec} kg` },
                 { title: 'OHP (classique)', detail: `3×3 Top Set @ ${w.C_ohp_3x3} kg` },
-                { title: 'BTN Press', detail: `Back-off 2× échec @ ${w.C_ohp_backoff_btn} kg` },
-                { title: 'Squat Stiletto', detail: `2× échec @ ${w.C_stiletto_echec} kg` }
+                { title: 'OHP (classique)', detail: `Back-off 1× échec @ ${w.C_ohp_backoff} kg` },
+                { title: 'Row déficit', detail: `5×5 @ ${w.C_row_5x5} kg` },
+                { title: 'Deadlift', detail: `${struct} @ ${dlMain} kg${dlBack>0 ? ' (+ backoff '+dlBack+' kg)' : ''}` }
             ];
         }
-
-        document.getElementById('gorillaWalk').style.display = 'block';
 
         exercises.forEach(ex => {
             const card = document.createElement('div');
@@ -837,6 +1198,46 @@
             list.appendChild(card);
         });
 
+        // Accessoires
+        const prs = state.prs || {};
+        prs.weight = state.weight || 85;
+        const analysis = analyzeImbalances(prs);
+        const accWeights = state.accessoryWeights || { tractions: 20, rdl: 100, btn: 40, stiletto: 100 };
+
+        const existingAccessories = [];
+        if (session === 'B') existingAccessories.push('btn');
+        if (session === 'C') existingAccessories.push('stiletto');
+
+        const accHtml = document.createElement('div');
+        accHtml.id = 'accessoryList';
+        accHtml.innerHTML = '';
+        if (analysis.accessories.length > 0) {
+            let accTitle = document.createElement('div');
+            accTitle.style.cssText = 'margin-top:16px; font-weight:700; color:#1e3a5f;';
+            accTitle.textContent = '🔧 Accessoires recommandés (2× échec)';
+            accHtml.appendChild(accTitle);
+
+            analysis.accessories.forEach(acc => {
+                if (existingAccessories.includes(acc.key)) return;
+
+                let name = '', target = '', weight = 0;
+                if (acc.key === 'tractions') { name = 'Tractions lestées'; target = 'dos'; weight = accWeights.tractions; }
+                else if (acc.key === 'rdl') { name = 'Soulevé de terre roumain (RDL)'; target = 'jambes (ischios)'; weight = accWeights.rdl; }
+                else if (acc.key === 'btn') { name = 'BTN Press'; target = 'épaules'; weight = accWeights.btn; }
+                else if (acc.key === 'stiletto') { name = 'Squat Stiletto'; target = 'jambes (quads)'; weight = accWeights.stiletto; }
+                const card = document.createElement('div');
+                card.className = 'accessory-card';
+                card.innerHTML = `
+                    <div class="title">${name}</div>
+                    <div class="detail">🎯 Cible : ${target}</div>
+                    <div class="detail">${acc.reason}</div>
+                    <div class="detail" style="color:#1d4ed8; font-weight:600; margin-top:4px;">Format : 2× échec @ ${weight} kg (progression si total > 15 reps)</div>
+                `;
+                accHtml.appendChild(card);
+            });
+            list.appendChild(accHtml);
+        }
+
         if (state.deloadActive && state.deloadSessionsRemaining > 0) {
             const endDate = new Date();
             endDate.setDate(endDate.getDate() + state.deloadSessionsRemaining * 2);
@@ -849,7 +1250,7 @@
         const stagnEx = checkStagnation(state);
         if (stagnEx && !state.deloadActive) {
             stagnationAlert.classList.remove('hidden');
-            stagnationMsg.textContent = `Stagnation détectée sur ${stagnEx === 'squat' ? 'le Squat' : stagnEx === 'ohp' ? "l'OHP" : 'le Row'}. Souhaitez-vous faire une semaine de deload (20% des charges) ?`;
+            stagnationMsg.textContent = `Stagnation détectée sur ${stagnEx === 'squat' ? 'le Squat' : stagnEx === 'ohp' ? "l'OHP" : 'le Row'}. Souhaitez-vous faire une semaine de gayload (20% des charges) ?`;
             document.getElementById('acceptDeloadBtn').onclick = () => {
                 if (!currentProfileName) return;
                 let data = getProfile(currentProfileName);
@@ -857,7 +1258,7 @@
                 saveProfile(currentProfileName, data);
                 currentProfileData = data;
                 renderWorkout(data);
-                showToast('🔽 Deload activé pour les 3 prochaines séances !');
+                showToast('🔽 Gayload activé pour les 3 prochaines séances !');
                 stagnationAlert.classList.add('hidden');
             };
             document.getElementById('declineDeloadBtn').onclick = () => {
@@ -870,36 +1271,92 @@
             stagnationAlert.classList.add('hidden');
         }
 
+        // Formulaire
         const form = document.getElementById('dynamicInputs');
         form.innerHTML = '';
         let html = '';
         if (session === 'A') {
             html = `
-                <div class="input-row"><label>📊 Row 2× échec (total reps)</label><input type="number" id="i_A_row_total" value="13" min="0"></div>
                 <div class="input-row"><label>✅ Squat 3×3 réussi ?</label><select id="i_A_squat_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
-                <div class="input-row"><label>📊 Squat backoff 2× (total reps)</label><input type="number" id="i_A_squat_backoff_total" value="13" min="0"></div>
-                <div class="input-row"><label>📊 OHP 5×5 (total reps 0-25)</label><input type="number" id="i_A_ohp_5x5_total" value="25" min="0" max="25"></div>`;
+                <div class="input-row"><label>📊 Squat backoff 1× (total reps)</label><input type="number" id="i_A_squat_backoff_total" value="10" min="0"></div>
+                <div class="input-row"><label>📊 OHP 5×5 (total reps 0-25)</label><input type="number" id="i_A_ohp_5x5_total" value="25" min="0" max="25"></div>
+                <div class="input-row"><label>📊 Row 2× échec (total reps)</label><input type="number" id="i_A_row_total" value="13" min="0"></div>
+            `;
+            if (analysis.accessories.some(a => a.key === 'tractions')) html += `<div class="input-row"><label>📊 Tractions lestées 2× (total reps)</label><input type="number" id="i_A_tractions_total" value="15" min="0"></div>`;
+            if (analysis.accessories.some(a => a.key === 'rdl')) html += `<div class="input-row"><label>📊 RDL 2× (total reps)</label><input type="number" id="i_A_rdl_total" value="15" min="0"></div>`;
+            if (analysis.accessories.some(a => a.key === 'btn')) html += `<div class="input-row"><label>📊 BTN Press 2× (total reps)</label><input type="number" id="i_A_btn_total" value="15" min="0"></div>`;
         } else if (session === 'B') {
             html = `
+                <div class="input-row"><label>📊 Squat 5×5 (total reps 0-25)</label><input type="number" id="i_B_squat_5x5_total" value="25" min="0" max="25"></div>
+                <div class="input-row"><label>📊 BTN 2× (total reps)</label><input type="number" id="i_B_btn_total" value="13" min="0"></div>
                 <div class="input-row"><label>✅ Row 3×3 réussi ?</label><select id="i_B_row_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
                 <div class="input-row"><label>📊 Row backoff 2× (total reps)</label><input type="number" id="i_B_row_backoff_total" value="13" min="0"></div>
-                <div class="input-row"><label>📊 Squat 5×5 (total reps 0-25)</label><input type="number" id="i_B_squat_5x5_total" value="25" min="0" max="25"></div>
-                <div class="input-row"><label>📊 BTN 2× (total reps)</label><input type="number" id="i_B_btn_total" value="13" min="0"></div>`;
+            `;
+            if (analysis.accessories.some(a => a.key === 'tractions')) html += `<div class="input-row"><label>📊 Tractions lestées 2× (total reps)</label><input type="number" id="i_B_tractions_total" value="15" min="0"></div>`;
+            if (analysis.accessories.some(a => a.key === 'rdl')) html += `<div class="input-row"><label>📊 RDL 2× (total reps)</label><input type="number" id="i_B_rdl_total" value="15" min="0"></div>`;
+            if (analysis.accessories.some(a => a.key === 'stiletto')) html += `<div class="input-row"><label>📊 Squat Stiletto 2× (total reps)</label><input type="number" id="i_B_stiletto_total" value="15" min="0"></div>`;
         } else if (session === 'C') {
             const week = state.dlWeek;
             html = `
+                <div class="input-row"><label>📊 Stiletto 2× (total reps)</label><input type="number" id="i_C_stiletto_total" value="13" min="0"></div>
+                <div class="input-row"><label>✅ OHP 3×3 réussi ?</label><select id="i_C_ohp_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
+                <div class="input-row"><label>📊 OHP backoff 1× (total reps)</label><input type="number" id="i_C_ohp_backoff_total" value="10" min="0"></div>
                 <div class="input-row"><label>📊 Row 5×5 (total reps 0-25)</label><input type="number" id="i_C_row_5x5_total" value="25" min="0" max="25"></div>
                 <div class="input-row"><label>✅ Deadlift (${['3×5','4×5','3×3','3×2'][week]} réussi ?)</label><select id="i_C_deadlift_complete"><option value="true">Oui</option><option value="false">Non</option></select></div>
                 ${(week===2||week===3)?`<div class="input-row"><label>📊 DL backoff (total reps, 2 sets)</label><input type="number" id="i_C_deadlift_back_total" value="12" min="0"></div>`:'<input type="hidden" id="i_C_deadlift_back_total" value="0">'}
-                <div class="input-row"><label>✅ OHP 3×3 réussi ?</label><select id="i_C_ohp_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
-                <div class="input-row"><label>📊 OHP backoff BTN 2× (total reps)</label><input type="number" id="i_C_ohp_backoff_total" value="13" min="0"></div>
-                <div class="input-row"><label>📊 Stiletto 2× (total reps)</label><input type="number" id="i_C_stiletto_total" value="13" min="0"></div>`;
+            `;
+            if (analysis.accessories.some(a => a.key === 'tractions')) html += `<div class="input-row"><label>📊 Tractions lestées 2× (total reps)</label><input type="number" id="i_C_tractions_total" value="15" min="0"></div>`;
+            if (analysis.accessories.some(a => a.key === 'rdl')) html += `<div class="input-row"><label>📊 RDL 2× (total reps)</label><input type="number" id="i_C_rdl_total" value="15" min="0"></div>`;
+            if (analysis.accessories.some(a => a.key === 'btn')) html += `<div class="input-row"><label>📊 BTN Press 2× (total reps)</label><input type="number" id="i_C_btn_total" value="15" min="0"></div>`;
         }
         form.innerHTML = html;
     }
 
     // ======================================================================
-    // TEST 1RM MANUEL (inchangé)
+    // FOCUS SÉANCE
+    // ======================================================================
+    const sessionFocusInfo = {
+        A: "Séance A – Squat & Épaules\n\n• Squat 3×3 + backoff 1× échec (LB) : force max sur les hanches et les quads.\n• OHP 5×5 : endurance de force pour les épaules.\n• Row 2× échec : hypertrophie dos.",
+        B: "Séance B – Squat & Dos\n\n• Squat 5×5 : endurance de force pour les jambes.\n• BTN 2× échec : hypertrophie épaules.\n• Row 3×3 + backoff 2× échec : force max sur le dos.",
+        C: "Séance C – Dos & Deadlift\n\n• Stiletto 2× échec : hypertrophie quads.\n• OHP 3×3 + backoff 1× échec (OHP classique) : force max épaules.\n• Row 5×5 : force-volume dos.\n• Deadlift : cycle périodisé de 4 semaines.\n\n👉 Objectif : bosser le dos et le deadlift sans impacter le squat lourd."
+    };
+
+    document.getElementById('sessionFocusBtn').addEventListener('click', function() {
+        if (!currentProfileData) { showToast('Aucune séance chargée'); return; }
+        const session = currentProfileData.currentSession;
+        const prs = currentProfileData.prs || {};
+        prs.weight = currentProfileData.weight || 85;
+        const analysis = analyzeImbalances(prs);
+        let accMsg = '';
+        if (analysis.accessories.length > 0) {
+            accMsg = '\n\n🔧 Accessoires recommandés pour cette séance :\n';
+            analysis.accessories.forEach(acc => {
+                let name = '';
+                if (acc.key === 'tractions') name = 'Tractions lestées';
+                else if (acc.key === 'rdl') name = 'Soulevé de terre roumain (RDL)';
+                else if (acc.key === 'btn') name = 'BTN Press';
+                else if (acc.key === 'stiletto') name = 'Squat Stiletto';
+                accMsg += `• ${name} : ${acc.reason}\n`;
+            });
+        } else {
+            accMsg = '\n\n⚖️ Aucun déséquilibre détecté, pas d\'accessoire nécessaire.';
+        }
+        const message = sessionFocusInfo[session] + accMsg;
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3>Focus Séance ${session}</h3>
+                <p style="white-space:pre-line; margin:12px 0;">${message}</p>
+                <button class="btn-primary close-modal">Fermer</button>
+            </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('.close-modal').onclick = () => modal.remove();
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    });
+
+    // ======================================================================
+    // TEST 1RM MANUEL
     // ======================================================================
     function openTest1RM() {
         if (!currentProfileData) { showToast('Aucun profil chargé'); return; }
@@ -917,7 +1374,10 @@
                 <button class="btn-secondary" id="cancelTest">Annuler</button>
             </div>`;
         document.body.appendChild(modal);
-        document.getElementById('cancelTest').onclick = () => modal.remove();
+        document.getElementById('cancelTest').onclick = () => {
+            modal.remove();
+            stopTestTimer();
+        };
         document.getElementById('confirmTest').onclick = () => {
             const lift = document.getElementById('testLift').value.toLowerCase();
             const weight = parseFloat(document.getElementById('testWeight').value);
@@ -932,7 +1392,8 @@
                 state.weights = computeInitialWeights(prs);
                 state.topSetHistory = { squat: [], ohp: [], row: [] };
                 state.fiveRepsHistory = { ohp: [], row: [], squat: [] };
-                state.twoSetsHistory = { row_echec: [], btn_echec: [], stiletto_echec: [], squat_backoff: [], row_backoff: [], ohp_backoff: [] };
+                state.twoSetsHistory = { row_echec: [], btn_echec: [], stiletto_echec: [], row_backoff: [] };
+                state.singleSetHistory = { squat_backoff: [], ohp_backoff: [] };
             }
             const date = new Date().toISOString().slice(0,10);
             addTestPoint(state, key, success ? weight : oldPR, date);
@@ -945,24 +1406,27 @@
                 : `😿 Gros gay, t'as échoué à ${weight} kg. 1RM conservé à ${oldPR}. Remets-toi en question.`;
             showToast(msg);
             modal.remove();
+            stopTestTimer();
         };
+        modal.addEventListener('click', (e) => { if (e.target === modal) { modal.remove(); stopTestTimer(); } });
+        startTestTimer();
     }
 
     // ======================================================================
-    // DELOAD MANUEL (inchangé)
+    // GAYLOAD MANUEL
     // ======================================================================
     function openDeload() {
         if (!currentProfileData) { showToast('Aucun profil chargé'); return; }
         if (currentProfileData.deloadActive) {
-            showToast('🔽 Un deload est déjà actif, gros gay !');
+            showToast('🔽 Un gayload est déjà actif, gros gay !');
             return;
         }
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="modal-content">
-                <h3>🔽 Deload</h3>
-                <p style="margin:12px 0;">Tu vas activer un deload pour les <strong>3 prochaines séances</strong>. Les charges seront réduites de <strong>20%</strong> et le volume allégé.</p>
+                <h3>🔽 Gayload</h3>
+                <p style="margin:12px 0;">Tu vas activer un gayload pour les <strong>3 prochaines séances</strong>. Les charges seront réduites de <strong>20%</strong> et le volume allégé.</p>
                 <p style="margin:8px 0; font-weight:bold; color:#b45309;">⚠️ T'es sûr, gros gay ?</p>
                 <button class="btn-primary" id="confirmDeload">✅ Oui, je suis un gros gay</button>
                 <button class="btn-secondary" id="cancelDeload">❌ Non, je suis un gorille</button>
@@ -975,13 +1439,13 @@
             saveProfile(currentProfileName, data);
             currentProfileData = data;
             renderWorkout(data);
-            showToast('🔽 Deload activé pour les 3 prochaines séances ! T\'es un gros gay ?');
+            showToast('🔽 Gayload activé pour les 3 prochaines séances ! T\'es un gros gay ?');
             modal.remove();
         };
     }
 
     // ======================================================================
-    // MODALES D'INTRODUCTION, AIDE & FOCUS SÉANCE (inchangé)
+    // MODALES D'INTRODUCTION, AIDE (inchangé)
     // ======================================================================
     function showIntroModal() {
         if (localStorage.getItem(INTRO_SHOWN_KEY)) return;
@@ -993,7 +1457,7 @@
                 <p style="margin:12px 0; font-weight:bold; color:#b45309;">⚠️ Bon, on va faire des biceps en oubliant de faire les triceps comme des tapettes. On travaille surtout pas le dos, on fait des hip thrusts avec les Cindies et du soulevé de terre sumo comme des gays.</p>
                 <p style="margin:8px 0;"><strong>(Non, je déconne.)</strong></p>
                 <p style="margin:8px 0;">Bienvenue dans le <strong>programme qui transforme les gros gay en Gorilles</strong>. Ici, on construit des <strong>hanches de titan</strong> et un <strong>dos de bête</strong>. On porte des charges lourdes sur le dos. Les bancs, les machines, les sangles, les ceintures, c'est pour les <span class="trash-talk">gays</span>.</p>
-                <p style="margin:8px 0;">Ton unique mission : passer du statut de <strong>Gay</strong> à <strong>Gorille</strong>. Les échelons : Gay → Fillette → Petit zizi → Sigma → Maxi Testo → Gorille. Chaque palier est un combat. Pour être un vrai Gorille, il te faudra des ratios de dingue : squat ≥2.8x, deadlift ≥3.3x, OHP ≥1.4x, row ≥2.8x ton poids de corps, et un gabarit (poids/taille³) ≥18.5. Alors, t’es chaud ou t’es une <span class="trash-talk">lopette</span> ?</p>
+                <p style="margin:8px 0;">Ton unique mission : passer du statut de <strong>Gay</strong> à <strong>Gorille</strong>. Les échelons : Gay → Fillette → Petit zizi → Sigma → Maxi Testo → Gorille. Chaque palier est un combat. Pour être un vrai Gorille, il te faudra des ratios de dingue : squat ≥2.8x, deadlift ≥3.3x, OHP ≥1.5x, row ≥2.0x ton poids de corps, et un gabarit (poids/taille³) ≥18.5. Alors, t’es chaud ou t’es une <span class="trash-talk">lopette</span> ?</p>
                 <button class="btn-primary" id="closeIntro">J'accepte le défi, je veux devenir Gorille</button>
             </div>`;
         document.body.appendChild(modal);
@@ -1015,27 +1479,22 @@
                 <div id="tab-usage" class="tab-panel active">
                     <h3>📱 Comment utiliser l'application</h3>
                     <p style="margin:8px 0;"><strong>Profil</strong> : crée ton profil avec tes 1RM réels (ou estimés max 5 reps). Ne remplis pas les deux champs, choisis une méthode, espèce de lopette.</p>
-                    <p style="margin:8px 0;"><strong>Navigation</strong> : boutons en haut – 📊 pour le suivi, 📋 pour le journal, 👤 pour changer de profil, ⚡ pour tester un 1RM, 🔽 pour lancer un deload manuel, ℹ️ pour le focus de la séance.</p>
-                    <p style="margin:8px 0;"><strong>Séances</strong> : 3 types (A, B, C) qui tournent automatiquement. Clique sur le bouton ℹ️ à côté du badge pour connaître le focus de la séance.</p>
-                    <p style="margin:8px 0;"><strong>Validation</strong> : remplis les résultats de chaque exercice (réussite, total de répétitions). Clique sur ✅ Valider la séance. L'application calcule la progression, enregistre la séance dans le journal et passe à la suivante.</p>
-                    <p style="margin:8px 0;"><strong>Test 1RM</strong> : tente un vrai max sur un lift. Si tu réussis, ton 1RM est mis à jour et les charges recalculées. Si t'échoues, t'es un gros gay, mais ton ancien record est conservé.</p>
-                    <p style="margin:8px 0;"><strong>Deload</strong> : si tu stagnes ou que t'es fatigué, tu peux accepter le deload proposé ou en lancer un manuellement. Pendant 3 séances, les charges sont réduites de 20%, puis elles reviennent à la normale.</p>
-                    <p style="margin:8px 0;"><strong>Journal 📋</strong> : consulte toutes tes séances passées avec les détails des exercices, poids et répétitions.</p>
-                    <p style="margin:8px 0;"><strong>Revenir en arrière</strong> : le bouton "↩️ Revenir séance précédente" annule la dernière validation et restaure l'état d'avant.</p>
-                    <p style="margin:8px 0;"><strong>Export/Import</strong> : sauvegarde tes profils en fichiers .json pour ne pas perdre tes données. Le journal est inclus dans l'export !</p>
+                    <p style="margin:8px 0;"><strong>Navigation</strong> : boutons en haut – 📊 pour le suivi, 📋 pour le journal, 👤 pour changer de profil, ⚡ pour tester un 1RM, 🔽 pour lancer un gayload, ℹ️ pour le focus de la séance. Clique sur le badge « Séance X » pour revenir à la séance en cours.</p>
+                    <p style="margin:8px 0;"><strong>Chronomètre</strong> : à côté du gorille, un chrono pour timer tes repos. Clignote et bip long à 3 minutes, gorille enragé et bip long à 5 minutes. Bouton ▶️/⏸️ et ⟲ pour remettre à zéro. Le chrono se réinitialise automatiquement quand tu changes de séance.</p>
+                    <p style="margin:8px 0;"><strong>Test 1RM</strong> : lance un chrono de 7 min avec gorille enragé et bip long à la fin.</p>
+                    <p style="margin:8px 0;"><strong>Séances</strong> : 3 types (A, B, C) qui tournent automatiquement. Clique sur ℹ️ pour voir le focus de la séance et les accessoires recommandés.</p>
+                    <p style="margin:8px 0;"><strong>Back-offs des 3×3</strong> : 1 seule série à l'échec. Progression si >10 reps.</p>
+                    <p style="margin:8px 0;"><strong>Accessoires dynamiques</strong> : détection des points faibles avec descriptions.</p>
+                    <p style="margin:8px 0;"><strong>Export/Import</strong> : sauvegarde tes profils en fichiers .json. Le journal est inclus !</p>
                 </div>
                 <div id="tab-program" class="tab-panel">
                     <h3>🏋️ Comment fonctionne le programme</h3>
-                    <p style="margin:8px 0;"><strong>Objectif</strong> : devenir un Gorille. On construit des hanches de titan et un dos de bête pour soulever des charges énormes debout, sans machine, sans banc, sans sumo de baltringue.</p>
-                    <p style="margin:8px 0;"><strong>Pourquoi 3 séances différentes ?</strong> Chaque jour a un focus différent : jambes (A), épaules (B), dos/deadlift (C). Chaque format cible une qualité spécifique : <em>force max</em> (3×3), <em>endurance de force</em> (5×5), <em>hypertrophie</em> (séries à l'échec).</p>
-                    <p style="margin:8px 0;"><strong>Le squat low-bar</strong> développe les hanches et les quads. Descendre sous la parallèle est obligatoire : non seulement ça protège le genou du tiroir antérieur, mais en plus, si tu ne descends pas, t'es un <span class="trash-talk">gay</span>. Le squat stiletto (talons surélevés, amplitude totale) verticalise le buste pour focus quads en profondeur, tout en maintenant la sécurité articulaire grâce à la profondeur.</p>
-                    <p style="margin:8px 0;"><strong>Le rowing déficit</strong> (prise large, buste à l'horizontale) permet une amplitude complète et un étirement maximal de tous les muscles du dos, renforçant la colonne vertébrale sous charge. Pas de rowing sur banc incliné, c'est pour les gays. Le rowing triché (non strict) est réservé aux lifteurs avancés qui maîtrisent déjà la technique : il permet de surcharger et de recruter plus de fibres, mais exige un gainage parfait.</p>
-                    <p style="margin:8px 0;"><strong>Pourquoi autant de rowing ?</strong> Parce qu'un dos fort et gainé transmet la force des hanches vers la barre. Faire des tractions comme un PD ne suffit pas : c'est le rowing lourd qui construit une colonne vertébrale capable de supporter des charges énormes, et un gainage qui te permet de rester solide sous la barre.</p>
-                    <p style="margin:8px 0;"><strong>L'OHP</strong> développe la force de poussée verticale. Le BTN Press (barre derrière la nuque) change la trajectoire de la barre et l'aligne avec le deltoïde latéral, ce qui permet de le travailler en hypertrophie bien plus efficacement que n'importe quelle élévation latérale de gay.</p>
-                    <p style="margin:8px 0;"><strong>Cycle Deadlift</strong> : le deadlift suit une progression de 4 semaines basée sur des pourcentages de ton 1RM (72.5% / 75% / 80% / 85%) avec backoff en semaines 3 et 4. Chaque cycle complet augmente la charge de 2,5 kg.</p>
-                    <p style="margin:8px 0;"><strong>Progression</strong> : si tu réussis tes 3×3, tes 5×5 (25 reps au total) ou tes séries à l'échec (2 séries, seuil >12 reps), la charge monte de 2,5 kg. La stagnation est détectée quand tu rates 3 fois le même top set ET que le total de reps du 5×5 correspondant n'augmente pas.</p>
-                    <p style="margin:8px 0;"><strong>Deload</strong> : après une stagnation, un deload (optionnel) réduit les charges de 20% pendant 3 séances. Cela permet de récupérer tout en maintenant le mouvement. Ensuite, on reprend la progression là où on l'avait laissée.</p>
-                    <p style="margin:8px 0;"><strong>Niveaux</strong> : Gay → Fillette → Petit zizi → Sigma → Maxi Testo → Gorille. Chaque niveau dépend du ratio (poids soulevé / poids de corps) pour chaque lift ET du gabarit (poids / taille³). Pour être Gorille, il faut tous les ratios au max ET un gabarit de bête. Les benchmarks exacts sont visibles dans la page Suivi.</p>
+                    <p style="margin:8px 0;"><strong>Objectif</strong> : devenir un Gorille.</p>
+                    <p style="margin:8px 0;"><strong>3 séances différentes</strong> : A (jambes), B (épaules), C (dos/deadlift).</p>
+                    <p style="margin:8px 0;"><strong>Progression</strong> : si tu réussis tes 3×3, tes 5×5 (25 reps) ou tes séries à l'échec (2 séries >12 reps ; 1 série >10 reps), la charge monte de 2,5 kg.</p>
+                    <p style="margin:8px 0;"><strong>Gayload (deload)</strong> : optionnel, réduit les charges de 20% pendant 3 séances.</p>
+                    <p style="margin:8px 0;"><strong>Niveaux</strong> : Gay → Fillette → Petit zizi → Sigma → Maxi Testo → Gorille.</p>
+                    <p style="margin:8px 0;"><strong>Accessoires</strong> : proposés en fonction des déséquilibres, avec description du rattrapage.</p>
                 </div>
                 <button class="btn-primary close-help">Fermer</button>
             </div>`;
@@ -1056,29 +1515,6 @@
         modal.querySelector('.close-help').onclick = () => modal.remove();
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
     }
-
-    const sessionFocusInfo = {
-        A: "Séance A – Squat & Épaules\n\n• Row 2× échec : hypertrophie dos.\n• Squat 3×3 + backoff 2× échec : force max sur les hanches et les quads. Descends sous la parallèle, sinon t'es gay.\n• OHP 5×5 : endurance de force pour les épaules.",
-        B: "Séance B – Squat & Dos\n\n• Row 3×3 (déficit ou non strict) + backoff 2× échec : force max sur le dos.\n• Squat 5×5 : endurance de force pour les jambes sans deadlift à côté.\n• BTN 2× échec : hypertrophie épaules.",
-        C: "Séance C – Dos & Deadlift\n\n• Row 5×5 : force-volume pour le dos.\n• Deadlift : cycle périodisé de 4 semaines.\n• OHP 3×3 + backoff BTN 2× échec : force max épaules.\n• Stiletto 2× échec : hypertrophie quads.\n\n👉 Objectif : bosser le dos et le deadlift sans impacter le squat lourd."
-    };
-
-    document.getElementById('sessionFocusBtn').addEventListener('click', () => {
-        if (!currentProfileData) { showToast('Aucune séance chargée'); return; }
-        const session = currentProfileData.currentSession;
-        const message = sessionFocusInfo[session] || "Séance non définie.";
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3>Focus Séance ${session}</h3>
-                <p style="white-space:pre-line; margin:12px 0;">${message}</p>
-                <button class="btn-primary close-modal">Fermer</button>
-            </div>`;
-        document.body.appendChild(modal);
-        modal.querySelector('.close-modal').onclick = () => modal.remove();
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-    });
 
     function showProfileIntro() {
         const modal = document.createElement('div');
@@ -1131,6 +1567,7 @@
         if (!data) { showToast('❌ Profil introuvable'); return; }
         currentProfileName = name; currentProfileData = data;
         setCurrentProfileName(name);
+        currentSession = data.currentSession;
         hideAll(); workoutScreen.classList.remove('hidden');
         renderWorkout(data);
         const logCount = data.trainingLog ? data.trainingLog.length : 0;
@@ -1187,7 +1624,6 @@
         const liShape = document.createElement('li');
         liShape.innerHTML = `<span>Gabarit : ${bw} kg / ${height} cm (ratio ${shapeRatio.toFixed(2)})</span> <span>${getLevelBadgeHTML(shapeLevel)}</span>`;
         list.appendChild(liShape);
-        // Ajout du nombre de séances
         const logCount = data.trainingLog ? data.trainingLog.length : 0;
         const liLog = document.createElement('li');
         liLog.innerHTML = `<span>📋 Séances enregistrées</span> <span>${logCount}</span>`;
@@ -1197,12 +1633,27 @@
     // ======================================================================
     // INIT & ÉVÉNEMENTS
     // ======================================================================
+
+    function goToWorkout() {
+        if (currentProfileData) {
+            const newSession = currentProfileData.currentSession;
+            checkSessionChange(newSession);
+            hideAll();
+            workoutScreen.classList.remove('hidden');
+            renderWorkout(currentProfileData);
+        } else {
+            showToast('Aucun profil chargé');
+        }
+    }
+
+    document.getElementById('sessionBadge').addEventListener('click', goToWorkout);
+
     function init() {
         showIntroModal();
         const current = getCurrentProfileName();
         if (current) {
             const data = getProfile(current);
-            if (data) { currentProfileName = current; currentProfileData = data; hideAll(); workoutScreen.classList.remove('hidden'); renderWorkout(data); return; }
+            if (data) { currentProfileName = current; currentProfileData = data; currentSession = data.currentSession; hideAll(); workoutScreen.classList.remove('hidden'); renderWorkout(data); return; }
             else setCurrentProfileName(null);
         }
         hideAll(); profileScreen.classList.remove('hidden'); renderProfileList();
@@ -1214,11 +1665,7 @@
         document.getElementById('logScreen').classList.remove('hidden');
         renderLog(currentProfileData);
     });
-    document.getElementById('closeLogBtn').addEventListener('click', function() {
-        hideAll();
-        workoutScreen.classList.remove('hidden');
-        renderWorkout(currentProfileData);
-    });
+    document.getElementById('closeLogBtn').addEventListener('click', goToWorkout);
 
     document.getElementById('logWeightBtn').addEventListener('click', function() {
         const weight = parseFloat(document.getElementById('profileWeight').value);
@@ -1241,9 +1688,7 @@
         hideAll(); chartScreen.classList.remove('hidden');
         renderChart(currentProfileData);
     });
-    document.getElementById('closeChartBtn').addEventListener('click', function() {
-        hideAll(); workoutScreen.classList.remove('hidden'); renderWorkout(currentProfileData);
-    });
+    document.getElementById('closeChartBtn').addEventListener('click', goToWorkout);
     document.querySelectorAll('#showWeightCheck, #ratioCheck').forEach(el => el.addEventListener('change', () => {
         if (!chartScreen.classList.contains('hidden')) renderChart(currentProfileData);
     }));
@@ -1327,6 +1772,11 @@
             row: rowResult.tested,
             deadlift: deadResult.tested
         };
+        const bw = weight || 140;
+        const row = rowResult.value || 220;
+        let initialTractions = round2_5(row * 0.4 - bw);
+        if (initialTractions < 0) initialTractions = 0;
+        data.accessoryWeights.tractions = initialTractions;
 
         const old = editProfileScreen.dataset.oldName;
         if (old && old !== name) deleteProfile(old);
@@ -1334,6 +1784,7 @@
         setCurrentProfileName(name);
         currentProfileName = name;
         currentProfileData = data;
+        currentSession = data.currentSession;
         hideAll();
         workoutScreen.classList.remove('hidden');
         renderWorkout(data);
@@ -1341,9 +1792,7 @@
         showProfileIntro();
     });
 
-    document.getElementById('cancelEditBtn').addEventListener('click', () => {
-        hideAll(); profileScreen.classList.remove('hidden'); renderProfileList();
-    });
+    document.getElementById('cancelEditBtn').addEventListener('click', goToWorkout);
 
     document.getElementById('profileToggle').addEventListener('click', () => {
         if (currentProfileName && currentProfileData) saveProfile(currentProfileName, currentProfileData);
@@ -1354,24 +1803,28 @@
     document.getElementById('deloadBtn').addEventListener('click', openDeload);
     document.getElementById('cancelDeloadBtn').addEventListener('click', () => {
         if (!currentProfileName) return;
-        if (confirm('Annuler le deload et restaurer les charges normales ?')) {
+        if (confirm('Annuler le gayload et restaurer les charges normales ?')) {
             let data = getProfile(currentProfileName);
             if (data.originalWeights) {
                 data.weights = data.originalWeights;
                 data.originalWeights = null;
+            }
+            if (data.originalAccessoryWeights) {
+                data.accessoryWeights = data.originalAccessoryWeights;
+                data.originalAccessoryWeights = null;
             }
             data.deloadActive = false;
             data.deloadSessionsRemaining = 0;
             saveProfile(currentProfileName, data);
             currentProfileData = data;
             renderWorkout(data);
-            showToast('🔽 Deload annulé !');
+            showToast('🔽 Gayload annulé !');
         }
     });
 
     document.getElementById('helpBtn').addEventListener('click', showHelpModal);
 
-    document.getElementById('submitWorkout').addEventListener('click', () => {
+    document.getElementById('submitWorkout').addEventListener('click', function() {
         if (!currentProfileData) return;
         localStorage.setItem(UNDO_KEY, JSON.stringify(currentProfileData));
         const session = currentProfileData.currentSession;
@@ -1380,22 +1833,25 @@
         saveProfile(currentProfileName, newData);
         currentProfileData = newData;
         renderWorkout(newData);
+        resetTimer();
+        stopTestTimer();
+        currentSession = newData.currentSession;
         const topKey = session === 'A' ? 'A_squat_3x3' : (session === 'B' ? 'B_row_3x3' : 'C_ohp_3x3');
         const topSuccess = results[topKey] === true;
         const msg = topSuccess
             ? '💪 Monstre ! T\'es un gorille ! 🦍💢'
             : '😿 Gros gay, t\'as échoué. Retente plus tard, lopette.';
         showToast(msg);
-        document.getElementById('gorillaWalk').className = 'gorilla-chest';
-        document.getElementById('gorillaWalk').textContent = '🦍💢';
+        document.getElementById('gorillaTimer').className = 'gorilla-chest';
+        document.getElementById('gorillaTimer').textContent = '🦍💢';
         setTimeout(() => {
-            document.getElementById('gorillaWalk').className = 'gorilla-walk';
-            document.getElementById('gorillaWalk').textContent = '🦍';
+            document.getElementById('gorillaTimer').className = 'gorilla-walk';
+            document.getElementById('gorillaTimer').textContent = '🦍';
         }, 2000);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    document.getElementById('undoWorkoutBtn').addEventListener('click', () => {
+    document.getElementById('undoWorkoutBtn').addEventListener('click', function() {
         const backup = localStorage.getItem(UNDO_KEY);
         if (!backup) { showToast('❌ Aucune séance précédente à restaurer'); return; }
         if (!confirm('Revenir à la séance précédente ? Cela annulera la dernière validation.')) return;
@@ -1404,6 +1860,7 @@
             if (!currentProfileName) return;
             saveProfile(currentProfileName, prev);
             currentProfileData = prev;
+            currentSession = prev.currentSession;
             renderWorkout(prev);
             localStorage.removeItem(UNDO_KEY);
             showToast('↩️ Séance précédente restaurée !');
@@ -1411,7 +1868,7 @@
     });
 
     // ======================================================================
-    // EXPORT / IMPORT AVEC JOURNAL INCLUS
+    // EXPORT / IMPORT (inchangé)
     // ======================================================================
     document.getElementById('exportBackupBtn').addEventListener('click', () => {
         if (!currentProfileName) { showToast('Aucun profil'); return; }
@@ -1439,6 +1896,7 @@
                 const logCount = data.trainingLog ? data.trainingLog.length : 0;
                 saveProfile(currentProfileName, data);
                 currentProfileData = data;
+                currentSession = data.currentSession;
                 renderWorkout(data);
                 showToast(`✅ Profil mis à jour (${logCount} séances importées)`);
             } catch(err) { showToast('❌ Erreur lors de l\'import'); }
