@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Objectif Gorille 🦍</title>
-    <!-- PWA / Installation mobile -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a5f">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -99,6 +98,12 @@
         .tab-panel.active { display: block; }
         .session-focus-btn { background: none; border: 1px dashed #64748b; color: #64748b; font-size: 18px; cursor: pointer; padding: 2px 8px; border-radius: 12px; transition: all 0.2s; }
         .session-focus-btn:hover { background: #f1f5f9; color: #1e3a5f; border-color: #1e3a5f; }
+        .log-entry { background: #f8fafc; border-radius: 12px; padding: 12px; margin-bottom: 12px; border-left: 3px solid #2f5597; }
+        .log-date { font-weight: 700; color: #1e293b; font-size: 16px; margin-bottom: 4px; }
+        .log-session { font-weight: 600; color: #2f5597; }
+        .log-exo { margin-left: 12px; font-size: 14px; color: #334155; }
+        .log-exo strong { color: #0f172a; }
+        .log-exo .reps { color: #64748b; }
     </style>
 </head>
 <body>
@@ -111,13 +116,14 @@
             <button class="session-focus-btn" id="sessionFocusBtn" title="Focus de la séance">ℹ️</button>
             <button class="btn-help" id="helpBtn" title="Aide ❓">❓</button>
             <button class="settings-btn" id="chartToggle" title="Suivi 📊">📊</button>
+            <button class="settings-btn" id="logToggle" title="Journal 📋">📋</button>
             <button class="settings-btn" id="profileToggle" title="Changer de profil">👤</button>
             <button class="settings-btn" id="test1rmGlobalBtn" title="Test 1RM">⚡</button>
             <button class="settings-btn" id="deloadBtn" title="Deload" style="color:#d97706;">🔽</button>
         </div>
     </div>
 
-    <!-- ÉCRAN SUIVI -->
+    <!-- ÉCRAN SUIVI (inchangé) -->
     <div id="chartScreen" class="hidden">
         <h2 style="margin-bottom:12px;">📊 Suivi de progression (1RM)</h2>
         <div class="chart-selectors">
@@ -151,7 +157,14 @@
         <button class="btn-secondary" id="closeChartBtn">Fermer</button>
     </div>
 
-    <!-- GESTION DES PROFILS -->
+    <!-- ÉCRAN JOURNAL (Training Log) -->
+    <div id="logScreen" class="hidden">
+        <h2 style="margin-bottom:12px;">📋 Journal d'entraînement</h2>
+        <div id="logContainer"></div>
+        <button class="btn-secondary" id="closeLogBtn">Fermer</button>
+    </div>
+
+    <!-- GESTION DES PROFILS (inchangé) -->
     <div id="profileScreen" class="hidden">
         <h2 style="margin-bottom:16px;">👤 Vos profils</h2>
         <div id="profileList" class="profile-list"></div>
@@ -164,7 +177,7 @@
         <p class="info-text" style="margin-top:12px;">Données locales. Exportez pour sauvegarder.</p>
     </div>
 
-    <!-- ÉDITION PROFIL + STATS -->
+    <!-- ÉDITION PROFIL (inchangé) -->
     <div id="editProfileScreen" class="hidden">
         <h2 id="editProfileTitle" style="margin-bottom:16px;">Créer un profil</h2>
         <div class="input-group">
@@ -263,7 +276,7 @@
 
 <script>
     // ======================================================================
-    // PALIERS DE NIVEAU
+    // PALIERS DE NIVEAU (inchangé)
     // ======================================================================
     const levelNames = [
         { name: 'Gay', emoji: '🧒', class: 'level-gay' },
@@ -322,9 +335,9 @@
     // ======================================================================
     // GESTION DES PROFILS
     // ======================================================================
-    const PROFILES_KEY = 'force_profiles_v17';
-    const CURRENT_PROFILE_KEY = 'force_current_profile_v17';
-    const UNDO_KEY = 'force_undo_backup_v17';
+    const PROFILES_KEY = 'force_profiles_v22';
+    const CURRENT_PROFILE_KEY = 'force_current_profile_v22';
+    const UNDO_KEY = 'force_undo_backup_v22';
     const INTRO_SHOWN_KEY = 'force_intro_shown_v3';
 
     function getProfiles() {
@@ -349,6 +362,7 @@
             weightHistory: [],
             topSetHistory: { squat: [], ohp: [], row: [] },
             fiveRepsHistory: { ohp: [], row: [], squat: [] },
+            twoSetsHistory: { row_echec: [], btn_echec: [], stiletto_echec: [], squat_backoff: [], row_backoff: [], ohp_backoff: [] },
             dlCycleCount: 0,
             rmHistory: { squat: [], ohp: [], row: [], deadlift: [] },
             rmDates: [],
@@ -358,7 +372,8 @@
             originalWeights: null,
             rowNonStrict: false,
             height: 190,
-            weight: 140
+            weight: 140,
+            trainingLog: []  // ← INCLUS DANS L'EXPORT
         };
     }
 
@@ -378,19 +393,25 @@
         ];
 
         return {
-            A_squat_top: round2_5(prs.squat * 0.815),
-            A_squat_back: round2_5(prs.squat * 0.71),
-            A_ohp: round2_5(prs.ohp * 0.665),
-            A_row: round2_5(prs.row * 0.72),
-            B_ohp_top: round2_5(prs.ohp * 0.80),
-            B_ohp_back_btn: round2_5(prs.ohp * 0.55),
-            B_row: round2_5(prs.row * 0.775),
-            B_stiletto: round2_5(prs.squat * 0.55),
-            C_row_top: round2_5(prs.row * 0.83),
-            C_row_top_non_strict: round2_5(prs.row * 0.91),
-            C_row_back: round2_5(prs.row * 0.72),
-            C_squat: round2_5(prs.squat * 0.75),
-            C_btn: round2_5(prs.ohp * 0.65),
+            // Séance A
+            A_squat_3x3: round2_5(prs.squat * 0.815),
+            A_squat_backoff: round2_5(prs.squat * 0.71),
+            A_ohp_5x5: round2_5(prs.ohp * 0.665),
+            A_row_echec: round2_5(prs.row * 0.72),
+
+            // Séance B
+            B_squat_5x5: round2_5(prs.squat * 0.75),
+            B_btn_echec: round2_5(prs.ohp * 0.65),
+            B_row_3x3: round2_5(prs.row * 0.83),
+            B_row_3x3_non_strict: round2_5(prs.row * 0.91),
+            B_row_backoff: round2_5(prs.row * 0.72),
+
+            // Séance C
+            C_stiletto_echec: round2_5(prs.squat * 0.55),
+            C_ohp_3x3: round2_5(prs.ohp * 0.80),
+            C_ohp_backoff_btn: round2_5(prs.ohp * 0.55),
+            C_row_5x5: round2_5(prs.row * 0.775),
+
             dl_main,
             dl_back
         };
@@ -402,7 +423,7 @@
     }
 
     // ======================================================================
-    // LOGIQUE PROGRESSION
+    // LOGIQUE PROGRESSION (NOUVELLE STRUCTURE)
     // ======================================================================
     function applyProgression(state, results) {
         const w = state.weights;
@@ -435,48 +456,82 @@
         }
 
         if (session === 'A') {
-            let squatSuccess = results.A_squat_top === true;
-            if (squatSuccess) { w.A_squat_top = r(w.A_squat_top + 2.5); state.topSetHistory.squat.push(true); }
+            // Row 2× échec
+            const rowTotal = parseInt(results.A_row_total) || 0;
+            state.twoSetsHistory.row_echec.push(rowTotal);
+            if (rowTotal > 12) w.A_row_echec = r(w.A_row_echec + 2.5);
+
+            // Squat 3×3
+            let squatSuccess = results.A_squat_3x3 === true;
+            if (squatSuccess) { w.A_squat_3x3 = r(w.A_squat_3x3 + 2.5); state.topSetHistory.squat.push(true); }
             else { state.topSetHistory.squat.push(false); }
-            let sets = parseInt(results.A_squat_back_sets) || 2;
-            let total = parseInt(results.A_squat_back_total) || 0;
-            if (sets === 1 && total > 6) w.A_squat_back = r(w.A_squat_back + 2.5);
-            else if (sets === 2 && total > 12) w.A_squat_back = r(w.A_squat_back + 2.5);
-            const ohpTotal = parseInt(results.A_ohp_total) || 0;
+
+            // Squat backoff (2 sets)
+            const backTotal = parseInt(results.A_squat_backoff_total) || 0;
+            state.twoSetsHistory.squat_backoff.push(backTotal);
+            if (backTotal > 12) w.A_squat_backoff = r(w.A_squat_backoff + 2.5);
+
+            // OHP 5×5
+            const ohpTotal = parseInt(results.A_ohp_5x5_total) || 0;
             state.fiveRepsHistory.ohp.push(ohpTotal);
-            if (ohpTotal >= 25) w.A_ohp = r(w.A_ohp + 2.5);
-            if ((parseInt(results.A_row_total) || 0) > 25) w.A_row = r(w.A_row + 2.5);
+            if (ohpTotal >= 25) w.A_ohp_5x5 = r(w.A_ohp_5x5 + 2.5);
+
+            // Journal
+            const logEntry = {
+                date: new Date().toISOString().slice(0,10),
+                session: 'A',
+                exercises: [
+                    { name: 'Row déficit', type: '2× échec', weight: w.A_row_echec, reps: rowTotal + ' reps' },
+                    { name: 'Squat LB', type: '3×3 Top Set', weight: w.A_squat_3x3, reps: (results.A_squat_3x3 === true ? '3 3 3' : '3 3 2') },
+                    { name: 'Squat LB', type: 'Back-off 2× échec', weight: w.A_squat_backoff, reps: backTotal + ' reps' },
+                    { name: 'OHP', type: '5×5', weight: w.A_ohp_5x5, reps: ohpTotal.toString() }
+                ]
+            };
+            if (!state.trainingLog) state.trainingLog = [];
+            state.trainingLog.push(logEntry);
         }
         else if (session === 'B') {
-            let ohpSuccess = results.B_ohp_top === true;
-            if (ohpSuccess) { w.B_ohp_top = r(w.B_ohp_top + 2.5); state.topSetHistory.ohp.push(true); }
-            else { state.topSetHistory.ohp.push(false); }
-            let sets = parseInt(results.B_ohp_back_sets) || 2;
-            let total = parseInt(results.B_ohp_back_total) || 0;
-            if (sets === 1 && total > 6) w.B_ohp_back_btn = r(w.B_ohp_back_btn + 2.5);
-            else if (sets === 2 && total > 12) w.B_ohp_back_btn = r(w.B_ohp_back_btn + 2.5);
-            const rowTotal = parseInt(results.B_row_total) || 0;
-            state.fiveRepsHistory.row.push(rowTotal);
-            if (rowTotal >= 25) w.B_row = r(w.B_row + 2.5);
-            if ((parseInt(results.B_stiletto_total) || 0) > 25) w.B_stiletto = r(w.B_stiletto + 2.5);
+            // Row 3×3 + backoff
+            let rowKey = state.rowNonStrict ? 'B_row_3x3_non_strict' : 'B_row_3x3';
+            let rowSuccess = results.B_row_3x3 === true;
+            if (rowSuccess) { w[rowKey] = r(w[rowKey] + 2.5); state.topSetHistory.row.push(true); }
+            else { state.topSetHistory.row.push(false); }
+
+            const backTotal = parseInt(results.B_row_backoff_total) || 0;
+            state.twoSetsHistory.row_backoff.push(backTotal);
+            if (backTotal > 12) w.B_row_backoff = r(w.B_row_backoff + 2.5);
+
+            // Squat 5×5
+            const squatTotal = parseInt(results.B_squat_5x5_total) || 0;
+            state.fiveRepsHistory.squat.push(squatTotal);
+            if (squatTotal >= 25) w.B_squat_5x5 = r(w.B_squat_5x5 + 2.5);
+
+            // BTN 2× échec
+            const btnTotal = parseInt(results.B_btn_total) || 0;
+            state.twoSetsHistory.btn_echec.push(btnTotal);
+            if (btnTotal > 12) w.B_btn_echec = r(w.B_btn_echec + 2.5);
+
+            // Journal
+            const logEntry = {
+                date: new Date().toISOString().slice(0,10),
+                session: 'B',
+                exercises: [
+                    { name: 'Row', type: '3×3 Top Set ' + (state.rowNonStrict ? '(non strict)' : '(déficit)'), weight: w[rowKey], reps: (results.B_row_3x3 === true ? '3 3 3' : '3 3 2') },
+                    { name: 'Row déficit', type: 'Back-off 2× échec', weight: w.B_row_backoff, reps: backTotal + ' reps' },
+                    { name: 'Squat LB', type: '5×5', weight: w.B_squat_5x5, reps: squatTotal.toString() },
+                    { name: 'BTN Press', type: '2× échec', weight: w.B_btn_echec, reps: btnTotal + ' reps' }
+                ]
+            };
+            if (!state.trainingLog) state.trainingLog = [];
+            state.trainingLog.push(logEntry);
         }
         else if (session === 'C') {
-            let rowKey = state.rowNonStrict ? 'C_row_top_non_strict' : 'C_row_top';
-            let rowSuccess = results.C_row_top === true;
-            if (rowSuccess) {
-                w[rowKey] = r(w[rowKey] + 2.5);
-                state.topSetHistory.row.push(true);
-            } else {
-                state.topSetHistory.row.push(false);
-            }
-            let sets = parseInt(results.C_row_back_sets) || 2;
-            let total = parseInt(results.C_row_back_total) || 0;
-            if (sets === 1 && total > 6) w.C_row_back = r(w.C_row_back + 2.5);
-            else if (sets === 2 && total > 12) w.C_row_back = r(w.C_row_back + 2.5);
-            const squatTotal = parseInt(results.C_squat_total) || 0;
-            state.fiveRepsHistory.squat.push(squatTotal);
-            if (squatTotal >= 25) w.C_squat = r(w.C_squat + 2.5);
-            if ((parseInt(results.C_btn_total) || 0) > 15) w.C_btn = r(w.C_btn + 2.5);
+            // Row 5×5
+            const rowTotal = parseInt(results.C_row_5x5_total) || 0;
+            state.fiveRepsHistory.row.push(rowTotal);
+            if (rowTotal >= 25) w.C_row_5x5 = r(w.C_row_5x5 + 2.5);
+
+            // Deadlift
             let dlCompleted = results.C_deadlift_complete === true;
             let dlBackTotal = parseInt(results.C_deadlift_back_total) || 0;
             let week = state.dlWeek;
@@ -489,6 +544,38 @@
                 if (week < 3) state.dlWeek = week + 1;
                 else { state.dlWeek = 0; state.dlCycleCount = (state.dlCycleCount || 0) + 1; w.dl_main = w.dl_main.map(v => r(v + 2.5)); w.dl_back = w.dl_back.map(v => v === 0 ? 0 : r(v + 2.5)); }
             }
+
+            // OHP 3×3 + backoff BTN
+            let ohpSuccess = results.C_ohp_3x3 === true;
+            if (ohpSuccess) { w.C_ohp_3x3 = r(w.C_ohp_3x3 + 2.5); state.topSetHistory.ohp.push(true); }
+            else { state.topSetHistory.ohp.push(false); }
+
+            const ohpBackTotal = parseInt(results.C_ohp_backoff_total) || 0;
+            state.twoSetsHistory.ohp_backoff.push(ohpBackTotal);
+            if (ohpBackTotal > 12) w.C_ohp_backoff_btn = r(w.C_ohp_backoff_btn + 2.5);
+
+            // Stiletto 2× échec
+            const stilettoTotal = parseInt(results.C_stiletto_total) || 0;
+            state.twoSetsHistory.stiletto_echec.push(stilettoTotal);
+            if (stilettoTotal > 12) w.C_stiletto_echec = r(w.C_stiletto_echec + 2.5);
+
+            // Journal
+            const dlMain = w.dl_main[state.dlWeek] || 0;
+            const dlBack = w.dl_back[state.dlWeek] || 0;
+            const struct = ['3×5', '4×5', '3×3 + backoff', '3×2 + backoff'][state.dlWeek] || '3×5';
+            const logEntry = {
+                date: new Date().toISOString().slice(0,10),
+                session: 'C',
+                exercises: [
+                    { name: 'Row déficit', type: '5×5', weight: w.C_row_5x5, reps: rowTotal.toString() },
+                    { name: 'Deadlift', type: struct, weight: dlMain, reps: (dlBack > 0 ? '(+ backoff '+dlBack+' kg)' : '') },
+                    { name: 'OHP', type: '3×3 Top Set', weight: w.C_ohp_3x3, reps: (results.C_ohp_3x3 === true ? '3 3 3' : '3 3 2') },
+                    { name: 'BTN Press', type: 'Back-off 2× échec', weight: w.C_ohp_backoff_btn, reps: ohpBackTotal + ' reps' },
+                    { name: 'Squat Stiletto', type: '2× échec', weight: w.C_stiletto_echec, reps: stilettoTotal + ' reps' }
+                ]
+            };
+            if (!state.trainingLog) state.trainingLog = [];
+            state.trainingLog.push(logEntry);
         }
 
         if (session === 'A') state.currentSession = 'B';
@@ -521,11 +608,12 @@
         state.deloadSessionsRemaining = 3;
         state.topSetHistory = { squat: [], ohp: [], row: [] };
         state.fiveRepsHistory = { ohp: [], row: [], squat: [] };
+        state.twoSetsHistory = { row_echec: [], btn_echec: [], stiletto_echec: [], squat_backoff: [], row_backoff: [], ohp_backoff: [] };
         return state;
     }
 
     // ======================================================================
-    // SUIVI 1RM
+    // SUIVI 1RM (inchangé)
     // ======================================================================
     function addTestPoint(state, lift, value, date) {
         if (!state.rmHistory) state.rmHistory = { squat: [], ohp: [], row: [], deadlift: [] };
@@ -545,7 +633,7 @@
     }
 
     // ======================================================================
-    // RENDU GRAPHIQUE + TABLEAU
+    // RENDU GRAPHIQUE (inchangé)
     // ======================================================================
     function renderChart(state) {
         const canvas = document.getElementById('progressionCanvas');
@@ -670,7 +758,30 @@
     }
 
     // ======================================================================
-    // RENDU DE LA SÉANCE
+    // RENDU DU JOURNAL
+    // ======================================================================
+    function renderLog(state) {
+        const container = document.getElementById('logContainer');
+        container.innerHTML = '';
+        if (!state.trainingLog || state.trainingLog.length === 0) {
+            container.innerHTML = '<p class="info-text">Aucune séance enregistrée. Commence à t\'entraîner, gros gay !</p>';
+            return;
+        }
+        const logs = [...state.trainingLog].reverse();
+        logs.forEach(entry => {
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            let html = `<div class="log-date">${entry.date} – <span class="log-session">Séance ${entry.session}</span></div>`;
+            entry.exercises.forEach(ex => {
+                html += `<div class="log-exo"><strong>${ex.name}</strong> (${ex.type}) : ${ex.weight} kg – ${ex.reps}</div>`;
+            });
+            div.innerHTML = html;
+            container.appendChild(div);
+        });
+    }
+
+    // ======================================================================
+    // RENDU DE LA SÉANCE (NOUVELLE STRUCTURE)
     // ======================================================================
     function renderWorkout(state) {
         if (!state) return;
@@ -682,33 +793,32 @@
         const dlWeek = state.dlWeek || 0;
         let exercises = [];
 
-        const rowTopWeight = state.rowNonStrict ? w.C_row_top_non_strict : w.C_row_top;
-        const rowTopLabel = state.rowNonStrict ? '3×3 Top Set (non strict)' : '3×3 Top Set (déficit)';
+        const row3x3Weight = state.rowNonStrict ? w.B_row_3x3_non_strict : w.B_row_3x3;
 
         if (session === 'A') {
             exercises = [
-                { title: 'Squat (Low-bar)', detail: `3×3 Top Set @ ${w.A_squat_top} kg` },
-                { title: 'Squat (Low-bar)', detail: `Back-off (1-2× échec) @ ${w.A_squat_back} kg` },
-                { title: 'OHP (classique)', detail: `5×5 @ ${w.A_ohp} kg` },
-                { title: 'Row déficit', detail: `3× échec @ ${w.A_row} kg` }
+                { title: 'Row déficit', detail: `2× échec @ ${w.A_row_echec} kg` },
+                { title: 'Squat (Low-bar)', detail: `3×3 Top Set @ ${w.A_squat_3x3} kg` },
+                { title: 'Squat (Low-bar)', detail: `Back-off 2× échec @ ${w.A_squat_backoff} kg` },
+                { title: 'OHP (classique)', detail: `5×5 @ ${w.A_ohp_5x5} kg` }
             ];
         } else if (session === 'B') {
             exercises = [
-                { title: 'OHP (classique)', detail: `3×3 Top Set @ ${w.B_ohp_top} kg` },
-                { title: 'BTN Press', detail: `Back-off (1-2× échec) @ ${w.B_ohp_back_btn} kg` },
-                { title: 'Row déficit', detail: `5×5 @ ${w.B_row} kg` },
-                { title: 'Squat Stiletto', detail: `3× échec @ ${w.B_stiletto} kg` }
+                { title: 'Row', detail: `3×3 Top Set ${state.rowNonStrict ? '(non strict)' : '(déficit)'} @ ${row3x3Weight} kg` },
+                { title: 'Row déficit', detail: `Back-off 2× échec @ ${w.B_row_backoff} kg` },
+                { title: 'Squat (Low-bar)', detail: `5×5 @ ${w.B_squat_5x5} kg` },
+                { title: 'BTN Press', detail: `2× échec @ ${w.B_btn_echec} kg` }
             ];
         } else if (session === 'C') {
             const dlMain = w.dl_main[dlWeek] || 0;
             const dlBack = w.dl_back[dlWeek] || 0;
             const struct = ['3×5', '4×5', '3×3 + backoff', '3×2 + backoff'][dlWeek] || '3×5';
             exercises = [
-                { title: 'Row', detail: `${rowTopLabel} @ ${rowTopWeight} kg` },
-                { title: 'Row déficit', detail: `Back-off (1-2× échec) @ ${w.C_row_back} kg` },
+                { title: 'Row déficit', detail: `5×5 @ ${w.C_row_5x5} kg` },
                 { title: 'Deadlift', detail: `${struct} @ ${dlMain} kg${dlBack>0 ? ' (+ backoff '+dlBack+' kg)' : ''}` },
-                { title: 'Squat (Low-bar)', detail: `5×5 @ ${w.C_squat} kg` },
-                { title: 'BTN Press', detail: `2× échec @ ${w.C_btn} kg` }
+                { title: 'OHP (classique)', detail: `3×3 Top Set @ ${w.C_ohp_3x3} kg` },
+                { title: 'BTN Press', detail: `Back-off 2× échec @ ${w.C_ohp_backoff_btn} kg` },
+                { title: 'Squat Stiletto', detail: `2× échec @ ${w.C_stiletto_echec} kg` }
             ];
         }
 
@@ -765,34 +875,31 @@
         let html = '';
         if (session === 'A') {
             html = `
-                <div class="input-row"><label>✅ Squat 3×3 réussi ?</label><select id="i_A_squat_top"><option value="true">Oui</option><option value="false">Non</option></select></div>
-                <div class="input-row"><label>📊 Squat backoff (nb sets)</label><input type="number" id="i_A_squat_back_sets" value="2" min="1" max="2"></div>
-                <div class="input-row"><label>📊 Squat backoff (total reps)</label><input type="number" id="i_A_squat_back_total" value="13" min="0"></div>
-                <div class="input-row"><label>📊 OHP 5×5 (total reps 0-25)</label><input type="number" id="i_A_ohp_total" value="25" min="0" max="25"></div>
-                <div class="input-row"><label>📊 Row 3× (total reps)</label><input type="number" id="i_A_row_total" value="26" min="0"></div>`;
+                <div class="input-row"><label>📊 Row 2× échec (total reps)</label><input type="number" id="i_A_row_total" value="13" min="0"></div>
+                <div class="input-row"><label>✅ Squat 3×3 réussi ?</label><select id="i_A_squat_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
+                <div class="input-row"><label>📊 Squat backoff 2× (total reps)</label><input type="number" id="i_A_squat_backoff_total" value="13" min="0"></div>
+                <div class="input-row"><label>📊 OHP 5×5 (total reps 0-25)</label><input type="number" id="i_A_ohp_5x5_total" value="25" min="0" max="25"></div>`;
         } else if (session === 'B') {
             html = `
-                <div class="input-row"><label>✅ OHP 3×3 réussi ?</label><select id="i_B_ohp_top"><option value="true">Oui</option><option value="false">Non</option></select></div>
-                <div class="input-row"><label>📊 BTN backoff (nb sets)</label><input type="number" id="i_B_ohp_back_sets" value="2" min="1" max="2"></div>
-                <div class="input-row"><label>📊 BTN backoff (total reps)</label><input type="number" id="i_B_ohp_back_total" value="13" min="0"></div>
-                <div class="input-row"><label>📊 Row 5×5 (total reps 0-25)</label><input type="number" id="i_B_row_total" value="25" min="0" max="25"></div>
-                <div class="input-row"><label>📊 Stiletto 3× (total reps)</label><input type="number" id="i_B_stiletto_total" value="26" min="0"></div>`;
+                <div class="input-row"><label>✅ Row 3×3 réussi ?</label><select id="i_B_row_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
+                <div class="input-row"><label>📊 Row backoff 2× (total reps)</label><input type="number" id="i_B_row_backoff_total" value="13" min="0"></div>
+                <div class="input-row"><label>📊 Squat 5×5 (total reps 0-25)</label><input type="number" id="i_B_squat_5x5_total" value="25" min="0" max="25"></div>
+                <div class="input-row"><label>📊 BTN 2× (total reps)</label><input type="number" id="i_B_btn_total" value="13" min="0"></div>`;
         } else if (session === 'C') {
             const week = state.dlWeek;
             html = `
-                <div class="input-row"><label>✅ Row 3×3 réussi ?</label><select id="i_C_row_top"><option value="true">Oui</option><option value="false">Non</option></select></div>
-                <div class="input-row"><label>📊 Row backoff (nb sets)</label><input type="number" id="i_C_row_back_sets" value="2" min="1" max="2"></div>
-                <div class="input-row"><label>📊 Row backoff (total reps)</label><input type="number" id="i_C_row_back_total" value="13" min="0"></div>
+                <div class="input-row"><label>📊 Row 5×5 (total reps 0-25)</label><input type="number" id="i_C_row_5x5_total" value="25" min="0" max="25"></div>
                 <div class="input-row"><label>✅ Deadlift (${['3×5','4×5','3×3','3×2'][week]} réussi ?)</label><select id="i_C_deadlift_complete"><option value="true">Oui</option><option value="false">Non</option></select></div>
                 ${(week===2||week===3)?`<div class="input-row"><label>📊 DL backoff (total reps, 2 sets)</label><input type="number" id="i_C_deadlift_back_total" value="12" min="0"></div>`:'<input type="hidden" id="i_C_deadlift_back_total" value="0">'}
-                <div class="input-row"><label>📊 Squat 5×5 (total reps 0-25)</label><input type="number" id="i_C_squat_total" value="25" min="0" max="25"></div>
-                <div class="input-row"><label>📊 BTN 2× (total reps)</label><input type="number" id="i_C_btn_total" value="16" min="0"></div>`;
+                <div class="input-row"><label>✅ OHP 3×3 réussi ?</label><select id="i_C_ohp_3x3"><option value="true">Oui</option><option value="false">Non</option></select></div>
+                <div class="input-row"><label>📊 OHP backoff BTN 2× (total reps)</label><input type="number" id="i_C_ohp_backoff_total" value="13" min="0"></div>
+                <div class="input-row"><label>📊 Stiletto 2× (total reps)</label><input type="number" id="i_C_stiletto_total" value="13" min="0"></div>`;
         }
         form.innerHTML = html;
     }
 
     // ======================================================================
-    // TEST 1RM MANUEL
+    // TEST 1RM MANUEL (inchangé)
     // ======================================================================
     function openTest1RM() {
         if (!currentProfileData) { showToast('Aucun profil chargé'); return; }
@@ -825,6 +932,7 @@
                 state.weights = computeInitialWeights(prs);
                 state.topSetHistory = { squat: [], ohp: [], row: [] };
                 state.fiveRepsHistory = { ohp: [], row: [], squat: [] };
+                state.twoSetsHistory = { row_echec: [], btn_echec: [], stiletto_echec: [], squat_backoff: [], row_backoff: [], ohp_backoff: [] };
             }
             const date = new Date().toISOString().slice(0,10);
             addTestPoint(state, key, success ? weight : oldPR, date);
@@ -841,7 +949,7 @@
     }
 
     // ======================================================================
-    // DELOAD MANUEL
+    // DELOAD MANUEL (inchangé)
     // ======================================================================
     function openDeload() {
         if (!currentProfileData) { showToast('Aucun profil chargé'); return; }
@@ -873,7 +981,7 @@
     }
 
     // ======================================================================
-    // MODALES D'INTRODUCTION, AIDE & FOCUS SÉANCE
+    // MODALES D'INTRODUCTION, AIDE & FOCUS SÉANCE (inchangé)
     // ======================================================================
     function showIntroModal() {
         if (localStorage.getItem(INTRO_SHOWN_KEY)) return;
@@ -907,24 +1015,25 @@
                 <div id="tab-usage" class="tab-panel active">
                     <h3>📱 Comment utiliser l'application</h3>
                     <p style="margin:8px 0;"><strong>Profil</strong> : crée ton profil avec tes 1RM réels (ou estimés max 5 reps). Ne remplis pas les deux champs, choisis une méthode, espèce de lopette.</p>
-                    <p style="margin:8px 0;"><strong>Navigation</strong> : boutons en haut – 📊 pour le suivi, 👤 pour changer de profil, ⚡ pour tester un 1RM, 🔽 pour lancer un deload manuel, ℹ️ pour le focus de la séance.</p>
+                    <p style="margin:8px 0;"><strong>Navigation</strong> : boutons en haut – 📊 pour le suivi, 📋 pour le journal, 👤 pour changer de profil, ⚡ pour tester un 1RM, 🔽 pour lancer un deload manuel, ℹ️ pour le focus de la séance.</p>
                     <p style="margin:8px 0;"><strong>Séances</strong> : 3 types (A, B, C) qui tournent automatiquement. Clique sur le bouton ℹ️ à côté du badge pour connaître le focus de la séance.</p>
-                    <p style="margin:8px 0;"><strong>Validation</strong> : remplis les résultats de chaque exercice (réussite, nombre de séries, total de répétitions). Clique sur ✅ Valider la séance. L'application calcule la progression et passe à la séance suivante.</p>
+                    <p style="margin:8px 0;"><strong>Validation</strong> : remplis les résultats de chaque exercice (réussite, total de répétitions). Clique sur ✅ Valider la séance. L'application calcule la progression, enregistre la séance dans le journal et passe à la suivante.</p>
                     <p style="margin:8px 0;"><strong>Test 1RM</strong> : tente un vrai max sur un lift. Si tu réussis, ton 1RM est mis à jour et les charges recalculées. Si t'échoues, t'es un gros gay, mais ton ancien record est conservé.</p>
                     <p style="margin:8px 0;"><strong>Deload</strong> : si tu stagnes ou que t'es fatigué, tu peux accepter le deload proposé ou en lancer un manuellement. Pendant 3 séances, les charges sont réduites de 20%, puis elles reviennent à la normale.</p>
+                    <p style="margin:8px 0;"><strong>Journal 📋</strong> : consulte toutes tes séances passées avec les détails des exercices, poids et répétitions.</p>
                     <p style="margin:8px 0;"><strong>Revenir en arrière</strong> : le bouton "↩️ Revenir séance précédente" annule la dernière validation et restaure l'état d'avant.</p>
-                    <p style="margin:8px 0;"><strong>Export/Import</strong> : sauvegarde tes profils en fichiers .json pour ne pas perdre tes données.</p>
+                    <p style="margin:8px 0;"><strong>Export/Import</strong> : sauvegarde tes profils en fichiers .json pour ne pas perdre tes données. Le journal est inclus dans l'export !</p>
                 </div>
                 <div id="tab-program" class="tab-panel">
                     <h3>🏋️ Comment fonctionne le programme</h3>
                     <p style="margin:8px 0;"><strong>Objectif</strong> : devenir un Gorille. On construit des hanches de titan et un dos de bête pour soulever des charges énormes debout, sans machine, sans banc, sans sumo de baltringue.</p>
-                    <p style="margin:8px 0;"><strong>Pourquoi 3 séances différentes ?</strong> Chaque jour a un focus différent : jambes (A), épaules (B), dos/deadlift (C). Chaque format cible une qualité spécifique : <em>force max</em> (3×3), <em>endurance de force</em> (5×5), <em>volume/hypertrophie</em> (séries à l'échec).</p>
+                    <p style="margin:8px 0;"><strong>Pourquoi 3 séances différentes ?</strong> Chaque jour a un focus différent : jambes (A), épaules (B), dos/deadlift (C). Chaque format cible une qualité spécifique : <em>force max</em> (3×3), <em>endurance de force</em> (5×5), <em>hypertrophie</em> (séries à l'échec).</p>
                     <p style="margin:8px 0;"><strong>Le squat low-bar</strong> développe les hanches et les quads. Descendre sous la parallèle est obligatoire : non seulement ça protège le genou du tiroir antérieur, mais en plus, si tu ne descends pas, t'es un <span class="trash-talk">gay</span>. Le squat stiletto (talons surélevés, amplitude totale) verticalise le buste pour focus quads en profondeur, tout en maintenant la sécurité articulaire grâce à la profondeur.</p>
                     <p style="margin:8px 0;"><strong>Le rowing déficit</strong> (prise large, buste à l'horizontale) permet une amplitude complète et un étirement maximal de tous les muscles du dos, renforçant la colonne vertébrale sous charge. Pas de rowing sur banc incliné, c'est pour les gays. Le rowing triché (non strict) est réservé aux lifteurs avancés qui maîtrisent déjà la technique : il permet de surcharger et de recruter plus de fibres, mais exige un gainage parfait.</p>
                     <p style="margin:8px 0;"><strong>Pourquoi autant de rowing ?</strong> Parce qu'un dos fort et gainé transmet la force des hanches vers la barre. Faire des tractions comme un PD ne suffit pas : c'est le rowing lourd qui construit une colonne vertébrale capable de supporter des charges énormes, et un gainage qui te permet de rester solide sous la barre.</p>
                     <p style="margin:8px 0;"><strong>L'OHP</strong> développe la force de poussée verticale. Le BTN Press (barre derrière la nuque) change la trajectoire de la barre et l'aligne avec le deltoïde latéral, ce qui permet de le travailler en hypertrophie bien plus efficacement que n'importe quelle élévation latérale de gay.</p>
                     <p style="margin:8px 0;"><strong>Cycle Deadlift</strong> : le deadlift suit une progression de 4 semaines basée sur des pourcentages de ton 1RM (72.5% / 75% / 80% / 85%) avec backoff en semaines 3 et 4. Chaque cycle complet augmente la charge de 2,5 kg.</p>
-                    <p style="margin:8px 0;"><strong>Progression</strong> : si tu réussis tes 3×3, tes 5×5 (25 reps au total) ou tes séries à l'échec, la charge monte de 2,5 kg. La stagnation est détectée quand tu rates 3 fois le même top set ET que le total de reps du 5×5 correspondant n'augmente pas.</p>
+                    <p style="margin:8px 0;"><strong>Progression</strong> : si tu réussis tes 3×3, tes 5×5 (25 reps au total) ou tes séries à l'échec (2 séries, seuil >12 reps), la charge monte de 2,5 kg. La stagnation est détectée quand tu rates 3 fois le même top set ET que le total de reps du 5×5 correspondant n'augmente pas.</p>
                     <p style="margin:8px 0;"><strong>Deload</strong> : après une stagnation, un deload (optionnel) réduit les charges de 20% pendant 3 séances. Cela permet de récupérer tout en maintenant le mouvement. Ensuite, on reprend la progression là où on l'avait laissée.</p>
                     <p style="margin:8px 0;"><strong>Niveaux</strong> : Gay → Fillette → Petit zizi → Sigma → Maxi Testo → Gorille. Chaque niveau dépend du ratio (poids soulevé / poids de corps) pour chaque lift ET du gabarit (poids / taille³). Pour être Gorille, il faut tous les ratios au max ET un gabarit de bête. Les benchmarks exacts sont visibles dans la page Suivi.</p>
                 </div>
@@ -949,9 +1058,9 @@
     }
 
     const sessionFocusInfo = {
-        A: "Séance A – Jambes & Épaules\n\n• Squat lourd en 3×3 : force max sur les hanches et les quads. Le low-bar cible la chaîne postérieure. Descends sous la parallèle, sinon t'es gay.\n• OHP 5×5 : endurance de force pour les épaules, en développant la poussée verticale.\n• Row déficit 3× échec : volume dos en amplitude complète pour étirer tous les muscles du dos et renforcer la colonne vertébrale.",
-        B: "Séance B – Épaules & Assistance Squat\n\n• OHP 3×3 : force max sur les épaules, le mouvement roi de la poussée.\n• BTN Press back-off : hypertrophie du deltoïde latéral en alignant la barre derrière la nuque, bien plus efficace que les élévations latérales de gay.\n• Row 5×5 : hypertrophie du dos en endurance de force.\n• Squat Stiletto 3× échec : talons surélevés, amplitude totale, buste vertical pour focus quads. Descends sous la parallèle pour protéger tes genoux, sinon t'es un gay.",
-        C: "Séance C – Dos & Deadlift\n\n• Row 3×3 (déficit ou triché selon le mode) : force max sur le dos, colonne sous charge.\n• Deadlift : cycle périodisé de 4 semaines avec pourcentages du 1RM.\n• Squat 5×5 : volume pour les jambes, les hanches et tout le bas du corps.\n• BTN Press 2× échec : assistance épaules.\n\n👉 Objectif : progresser en force dans le dos et au deadlift, tout en maintenant le volume global."
+        A: "Séance A – Squat & Épaules\n\n• Row 2× échec : hypertrophie dos.\n• Squat 3×3 + backoff 2× échec : force max sur les hanches et les quads. Descends sous la parallèle, sinon t'es gay.\n• OHP 5×5 : endurance de force pour les épaules.",
+        B: "Séance B – Squat & Dos\n\n• Row 3×3 (déficit ou non strict) + backoff 2× échec : force max sur le dos.\n• Squat 5×5 : endurance de force pour les jambes sans deadlift à côté.\n• BTN 2× échec : hypertrophie épaules.",
+        C: "Séance C – Dos & Deadlift\n\n• Row 5×5 : force-volume pour le dos.\n• Deadlift : cycle périodisé de 4 semaines.\n• OHP 3×3 + backoff BTN 2× échec : force max épaules.\n• Stiletto 2× échec : hypertrophie quads.\n\n👉 Objectif : bosser le dos et le deadlift sans impacter le squat lourd."
     };
 
     document.getElementById('sessionFocusBtn').addEventListener('click', () => {
@@ -1002,7 +1111,7 @@
             const rowMode = p.rowNonStrict ? '🔁 Non strict' : '📐 Déficit';
             html += `<div class="profile-item" style="${isActive ? 'border:2px solid #2f5597;' : ''}">
                 <div><div class="name">${name} ${isActive ? '⭐' : ''}</div>
-                <div class="details">Squat ${p.prs?.squat || '?'}kg · OHP ${p.prs?.ohp || '?'}kg · Row ${rowMode} · Poids ${lastWeight}kg</div></div>
+                <div class="details">Squat ${p.prs?.squat || '?'}kg · OHP ${p.prs?.ohp || '?'}kg · Row ${rowMode} · Poids ${lastWeight}kg · ${p.trainingLog ? p.trainingLog.length : 0} séances</div></div>
                 <div class="actions">
                     <button class="btn-select" data-name="${name}">Charger</button>
                     <button class="btn-edit" data-name="${name}">✏️</button>
@@ -1024,7 +1133,8 @@
         setCurrentProfileName(name);
         hideAll(); workoutScreen.classList.remove('hidden');
         renderWorkout(data);
-        showToast(`✅ Profil "${name}" chargé`);
+        const logCount = data.trainingLog ? data.trainingLog.length : 0;
+        showToast(`✅ Profil "${name}" chargé (${logCount} séances dans le journal)`);
     }
 
     function editProfile(name) {
@@ -1077,6 +1187,11 @@
         const liShape = document.createElement('li');
         liShape.innerHTML = `<span>Gabarit : ${bw} kg / ${height} cm (ratio ${shapeRatio.toFixed(2)})</span> <span>${getLevelBadgeHTML(shapeLevel)}</span>`;
         list.appendChild(liShape);
+        // Ajout du nombre de séances
+        const logCount = data.trainingLog ? data.trainingLog.length : 0;
+        const liLog = document.createElement('li');
+        liLog.innerHTML = `<span>📋 Séances enregistrées</span> <span>${logCount}</span>`;
+        list.appendChild(liLog);
     }
 
     // ======================================================================
@@ -1092,6 +1207,18 @@
         }
         hideAll(); profileScreen.classList.remove('hidden'); renderProfileList();
     }
+
+    document.getElementById('logToggle').addEventListener('click', function() {
+        if (!currentProfileData) { showToast('Aucun profil chargé'); return; }
+        hideAll();
+        document.getElementById('logScreen').classList.remove('hidden');
+        renderLog(currentProfileData);
+    });
+    document.getElementById('closeLogBtn').addEventListener('click', function() {
+        hideAll();
+        workoutScreen.classList.remove('hidden');
+        renderWorkout(currentProfileData);
+    });
 
     document.getElementById('logWeightBtn').addEventListener('click', function() {
         const weight = parseFloat(document.getElementById('profileWeight').value);
@@ -1253,7 +1380,7 @@
         saveProfile(currentProfileName, newData);
         currentProfileData = newData;
         renderWorkout(newData);
-        const topKey = session === 'A' ? 'A_squat_top' : (session === 'B' ? 'B_ohp_top' : 'C_row_top');
+        const topKey = session === 'A' ? 'A_squat_3x3' : (session === 'B' ? 'B_row_3x3' : 'C_ohp_3x3');
         const topSuccess = results[topKey] === true;
         const msg = topSuccess
             ? '💪 Monstre ! T\'es un gorille ! 🦍💢'
@@ -1283,17 +1410,22 @@
         } catch(e) { showToast('❌ Erreur'); }
     });
 
+    // ======================================================================
+    // EXPORT / IMPORT AVEC JOURNAL INCLUS
+    // ======================================================================
     document.getElementById('exportBackupBtn').addEventListener('click', () => {
         if (!currentProfileName) { showToast('Aucun profil'); return; }
         const data = getProfile(currentProfileName);
         if (!data) return;
+        const logCount = data.trainingLog ? data.trainingLog.length : 0;
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = `profil_${currentProfileName}_${new Date().toISOString().slice(0,10)}.json`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        showToast('✅ Exporté');
+        showToast(`✅ Profil exporté (${logCount} séances dans le journal)`);
     });
+
     document.getElementById('importBackupBtn').addEventListener('click', () => document.getElementById('importBackupInput').click());
     document.getElementById('importBackupInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -1304,11 +1436,12 @@
                 const data = JSON.parse(ev.target.result);
                 if (!data.prs || !data.weights) { showToast('❌ Fichier invalide'); return; }
                 if (!currentProfileName) { showToast('Chargez un profil d\'abord'); return; }
+                const logCount = data.trainingLog ? data.trainingLog.length : 0;
                 saveProfile(currentProfileName, data);
                 currentProfileData = data;
                 renderWorkout(data);
-                showToast(`✅ Profil mis à jour`);
-            } catch(err) { showToast('❌ Erreur'); }
+                showToast(`✅ Profil mis à jour (${logCount} séances importées)`);
+            } catch(err) { showToast('❌ Erreur lors de l\'import'); }
         };
         reader.readAsText(file);
         e.target.value = '';
@@ -1317,13 +1450,18 @@
     document.getElementById('exportAllBtn').addEventListener('click', () => {
         const p = getProfiles();
         if (Object.keys(p).length === 0) { showToast('Aucun profil'); return; }
+        let totalSessions = 0;
+        for (const name in p) {
+            if (p[name].trainingLog) totalSessions += p[name].trainingLog.length;
+        }
         const blob = new Blob([JSON.stringify(p, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = `profils_${new Date().toISOString().slice(0,10)}.json`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        showToast('✅ Tous exportés');
+        showToast(`✅ Tous les profils exportés (${totalSessions} séances au total)`);
     });
+
     document.getElementById('importAllBtn').addEventListener('click', () => document.getElementById('importAllInput').click());
     document.getElementById('importAllInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -1333,12 +1471,16 @@
             try {
                 const data = JSON.parse(ev.target.result);
                 if (typeof data !== 'object' || Array.isArray(data)) { showToast('❌ Invalide'); return; }
+                let totalSessions = 0;
+                for (const name in data) {
+                    if (data[name].trainingLog) totalSessions += data[name].trainingLog.length;
+                }
                 saveProfiles(data);
                 renderProfileList();
                 const current = getCurrentProfileName();
                 if (current && data[current]) loadProfile(current);
-                showToast('✅ Profils importés');
-            } catch(err) { showToast('❌ Erreur'); }
+                showToast(`✅ ${Object.keys(data).length} profils importés (${totalSessions} séances)`);
+            } catch(err) { showToast('❌ Erreur lors de l\'import'); }
         };
         reader.readAsText(file);
         e.target.value = '';
@@ -1370,6 +1512,7 @@
         editProfileScreen.classList.add('hidden');
         workoutScreen.classList.add('hidden');
         chartScreen.classList.add('hidden');
+        document.getElementById('logScreen').classList.add('hidden');
     }
 
     init();
