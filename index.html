@@ -161,14 +161,40 @@
     <!-- ÉCRAN SUIVI (niveaux + déséquilibres, sans graphique) -->
     <div id="chartScreen" class="hidden">
         <h2 style="margin-bottom:12px;">📊 Analyse du Gorille</h2>
+
+        <!-- 1. Niveaux actuels -->
         <h3 style="margin-bottom:8px;">🏆 Niveaux actuels</h3>
         <table class="level-table" id="levelTable">
             <thead><tr><th>Lift / Gabarit</th><th>Valeur</th><th>Ratio</th><th>Niveau</th></tr></thead>
             <tbody id="levelTableBody"></tbody>
         </table>
+
+        <!-- 2. Seuils de déséquilibre (toujours visibles) -->
+        <h3 style="margin:16px 0 8px;">⚖️ Seuils de déséquilibre</h3>
+        <table class="level-table" style="font-size:12px;">
+            <thead><tr><th>Condition</th><th>Accessoire recommandé</th></tr></thead>
+            <tbody>
+                <tr><td>Deadlift / Squat &gt; 1.25</td><td>Squat Stiletto</td></tr>
+                <tr><td>Deadlift / Squat &lt; 0.95</td><td>RDL de gonzesse</td></tr>
+                <tr><td>Squat / OHP &gt; 2.5</td><td>BTN Press</td></tr>
+                <tr><td>Squat / OHP &lt; 1.6</td><td>Squat Stiletto</td></tr>
+                <tr><td>Squat / Row &gt; 1.4</td><td>Tractions de gay</td></tr>
+                <tr><td>Squat / Row &lt; 1.0</td><td>Squat Stiletto</td></tr>
+                <tr><td>Deadlift / Row &gt; 1.6</td><td>Tractions de gay</td></tr>
+                <tr><td>Deadlift / Row &lt; 1.2</td><td>RDL de gonzesse</td></tr>
+                <tr><td>OHP / Row &lt; 0.5</td><td>BTN Press</td></tr>
+                <tr><td>OHP / Row &gt; 0.75</td><td>Tractions de gay</td></tr>
+            </tbody>
+        </table>
+
+        <!-- 3. Déséquilibres détectés (dynamique) -->
         <div id="imbalanceContainer"></div>
+
+        <!-- 4. Accessoires recommandés (dynamique) -->
         <div id="accessoryContainer"></div>
-        <div style="margin-top:12px; background:#f0f2f5; padding:10px; border-radius:12px; font-size:12px;">
+
+        <!-- 5. Rappel des paliers de ratio -->
+        <div style="margin-top:16px; background:#f0f2f5; padding:10px; border-radius:12px; font-size:12px;">
             <strong>📋 Paliers de ratio (poids soulevé / poids de corps)</strong><br>
             <em>🧒 Gay → 🧚 Fillette → 🤏 Petit zizi → 🗿 Sigma → 💪 Maxi Testo → 🦍 Gorille</em>
             <table style="width:100%; margin-top:6px; border-collapse:collapse; text-align:center;">
@@ -182,6 +208,7 @@
             <span style="color:#b45309;">🦍 Gorille uniquement si tous les lifts atteignent les ratios ultimes ET que le gabarit est ≥18.5.</span>
             <div style="margin-top:8px; font-style:italic; color:#7c3aed;">💀 Le squat, c'est le roi. Un vrai homme le pratique pieds au sol, comme un Gorille.</div>
         </div>
+
         <button class="btn-secondary" id="closeChartBtn">Fermer</button>
     </div>
 
@@ -365,6 +392,7 @@
         return `<span class="level-badge ${level.class}">${level.emoji} ${level.name}</span>`;
     }
 
+    // ----- AJOUTE LA FONCTION ICI -----
     function updateLevelTable(state) {
         const tbody = document.getElementById('levelTableBody');
         if (!tbody) return;
@@ -398,7 +426,8 @@
             <td>${getLevelBadgeHTML(shapeLevel)}</td>
         </tr>`;
         tbody.innerHTML = html;
-    }    
+    }
+
 
     // ======================================================================
     // ANALYSE DES DÉSÉQUILIBRES
@@ -464,7 +493,7 @@
         return { results, accessories: uniqueAccessories };
     }
 
-    function renderImbalancesAndAccessories(state) {
+function renderImbalancesAndAccessories(state) {
         const container = document.getElementById('imbalanceContainer');
         const accContainer = document.getElementById('accessoryContainer');
         container.innerHTML = '';
@@ -472,20 +501,21 @@
         const prs = state.prs || {};
         prs.weight = state.weight || 85;
         const analysis = analyzeImbalances(prs);
+
         if (analysis.results.length === 0) {
-            container.innerHTML = '<div class="info-text">⚖️ Tous tes lifts sont équilibrés. Continue comme ça, gorille !</div>';
-            return;
-        }
-        let html = '<div style="margin-top:12px;"><strong>⚠️ Déséquilibres détectés</strong></div>';
-        html += '<div style="font-size:12px; color:#64748b; margin-bottom:6px;">Seuils : deadlift/squat >1.25 → stiletto, <0.95 → RDL ; squat/OHP >2.5 → BTN, <1.6 → stiletto ; squat/row >1.4 → tractions, <1.0 → stiletto ; deadlift/row >1.6 → tractions, <1.2 → RDL ; OHP/row <0.5 → BTN, >0.75 → tractions</div>';
+            container.innerHTML = '<div class="info-text">✅ Aucun déséquilibre détecté. Continue comme ça, gorille !</div>';
+        } else {
+            let html = '<div style="margin-top:12px;"><strong>⚠️ Déséquilibres détectés</strong></div>';
             analysis.results.forEach(r => {
-            const cls = r.type === 'bad' ? 'bad' : 'warn';
-            html += `<div class="imbalance-card ${cls}">${r.msg}</div>`;
-        });
-        container.innerHTML = html;
+                const cls = r.type === 'bad' ? 'bad' : 'warn';
+                html += `<div class="imbalance-card ${cls}">${r.msg}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
         if (analysis.accessories.length > 0) {
             const accWeights = state.accessoryWeights || { tractions: 20, rdl: 100, btn: 40, stiletto: 100 };
-            let accHtml = '<div style="margin-top:16px;"><strong>🔧 Accessoires recommandés</strong></div>';
+            let accHtml = '<div style="margin-top:16px;"><strong>🔧 Accessoires recommandés (2× échec, seuil > 15 reps total)</strong></div>';
             analysis.accessories.forEach(key => {
                 let name = '', target = '', weight = 0, reason = '';
                 if (key === 'tractions') { name = 'Tractions de gay'; target = 'dos'; weight = accWeights.tractions; reason = 'Pour un dos de gorille.'; }
@@ -917,7 +947,7 @@
         Object.assign(state.lastReps, sessionReps);
 
         // Ajout des accessoires dans le log
-        const accNames = { tractions: 'Tractions de Gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
+        const accNames = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
         for (const [key, name] of Object.entries(accNames)) {
             const fullKey = session + '_acc_' + key;
             const count = results[fullKey + '_count'] || 0;
@@ -1084,7 +1114,7 @@
             list.appendChild(accTitle);
 
             analysis.accessories.forEach(key => {
-                const names = { tractions: 'Tractions de Gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
+                const names = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
                 const targets = { tractions: 'dos', rdl: 'ischios', btn: 'épaules', stiletto: 'quads' };
                 const card = document.createElement('div');
                 card.className = 'accessory-card';
@@ -1208,7 +1238,7 @@
             accHtml = '<div style="margin-top:16px; margin-bottom:8px;"><strong>🔧 Accessoires</strong></div>';
             accHtml += '<p class="info-text">Choisis le nombre de séries, puis renseigne les reps (échec).</p>';
             analysis.accessories.forEach(key => {
-                const names = { tractions: 'Tractions de Gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
+                const names = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
                 const accKey = `${session}_acc_${key}`;
                 const lastAcc = last[accKey] || [];
                 accHtml += `<div style="margin-bottom:12px;">
