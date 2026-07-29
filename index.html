@@ -911,7 +911,7 @@ function renderImbalancesAndAccessories(state) {
                 else {
                     state.dlWeek = 0;
                     state.dlCycleCount = (state.dlCycleCount || 0) + 1;
-                    w.dl_main = w.dl_main.map(v => rBas(v + 5));
+                    w.dl_main = w.dl_main.map(v => r2_5(v + 5));
                     w.dl_back = [0, 0, round2_5(w.dl_main[2] * 0.90), round2_5(w.dl_main[3] * 0.90)];
                 }
             }
@@ -1426,21 +1426,21 @@ function renderImbalancesAndAccessories(state) {
                     <p><strong>Badge Séance</strong> : Affiche la séance en cours (A, B ou C). Clique dessus pour revenir à l'écran d'entraînement.</p>
                     <p><strong>ℹ️ Focus</strong> : Décrit le thème de la séance et les accessoires recommandés.</p>
                     <p><strong>❓ Aide</strong> : Ouvre cette fenêtre.</p>
-                    <p><strong>📊 Suivi</strong> : Graphique de progression des 1RM estimés et tableau des niveaux (Gay → Gorille).</p>
+                    <p><strong>📊 Suivi</strong> : Affichage des niveaux sur les diférents lifts (de Gay à Gorille) et analyse des déséquilibres.</p>
                     <p><strong>📋 Journal</strong> : Historique complet de toutes les séances validées.</p>
                     <p><strong>👤 Profil</strong> : Gestion des profils (créer, charger, modifier, exporter/importer).</p>
                     <p><strong>⚡ Test 1RM</strong> : Permet d'enregistrer un nouveau record ou une tentative échouée sur un lift.</p>
                     <p><strong>🔽 Gayload</strong> : Active une semaine de gayload (deload) à -20% (3 séances) en cas de stagnation ou fatigue. Annulable.</p>
                     <p><strong>⏱️ Chronomètre</strong> : Lancer/arrêter avec le bouton ou en cliquant sur le gorille. Reset avec le bouton ↺ ou double-clic sur le gorille. Bip sonore à 3 min (clignotement), bip long à 5 min (gorille agité).</p>
-                    <p><strong>Formulaire de séance</strong> : Pour chaque exercice, choisis le nombre de séries (si applicable) puis pour chaque série indique si elle est <em>Réussie</em> ou <em>Échouée</em>. Les accessoires sont en bas, avec option 0 série. Valide avec le bouton ✅.</p>
+                    <p><strong>Formulaire de séance</strong> : Pour chaque exercice, tu completes le nombre de reps par séries que t'as fais. Les accessoires sont en bas, avec option 0 série. Valide avec le bouton ✅.</p>
                 </div>
                 <div id="tab-exercises" class="tab-panel">
                     <h3>🏋️ Exercices</h3>
-                    <p><strong>Squat LB (Low-Bar)</strong> : Le seul vrai exercice de gorille. Développe la force des hanches et des jambes tout en contraignant le dos et les trapèzes à transmettre la charge. On passe <strong>sous la parallèle</strong> (sinon t’es gay) : au‑delà, les ischio‑jambiers prennent le relais pour stabiliser le genou et éviter le tiroir antérieur qui nique les ligaments croisés. Oublie pas de gainer comme un bœuf.</p>
-                    <p><strong>Squat Stiletto (High-Bar, talons surélevés)</strong> : Grâce à la dorsiflexion artificielle, on réduit la flexion/rotation externe de hanche, on défavorise adducteurs et les hanches au profit de tes quads de crevette. <span class="trash-talk">Gros gay va.</span></p>
-                    <p><strong>Rowing déficit (Bent Over Row)</strong> : On tire en extension complète de l’upper back, buste à l’horizontale, en déficit (amplitude max). Le dos est sous charge : faut <strong>hinge et gainer</strong> pour ne pas s’écrouler comme une lopette. La colonne blindée, les tractions c’est pour les gays.</p>
+                    <p><strong>Squat LB (Low-Bar)</strong> : Le seul vrai exercice de gorille. Développe la force des hanches et des jambes tout en contraignant le dos et les trapèzes à transmettre la charge. On passe <em>sous la parallèle</em> (sinon t’es gay) : au‑delà, les ischio‑jambiers prennent le relais pour stabiliser le genou et éviter le tiroir antérieur qui nique les ligaments croisés. Oublie pas de gainer comme un bœuf.</p>
+                    <p><strong>Squat Stiletto (High-Bar, talons surélevés)</strong> : Grâce à la dorsiflexion artificielle, on réduit la flexion/rotation externe de hanche, on désengage les adducteurs et les extenseurs de la hanche au profit de tes quads de crevette. <span class="trash-talk">Gros gay va.</span></p>
+                    <p><strong>Rowing déficit (Bent Over Row)</strong> : On tire en extension complète de l’upper back, buste à l’horizontale, en déficit (amplitude max). Le dos est sous charge : faut <strong>hinge et gainer</strong> pour ne pas s’écrouler comme une lopette. On fait du Rowing car les tractions c’est pour les gays.</p>
                     <p><strong>OHP (Overhead Press)</strong> : Poussée verticale debout. En prise large, la rotation interne sollicite la coiffe des rotateurs – on renforce l’épaule dans toute son amplitude. En fin de mouvement, un léger shrug couronne les trapèzes.
-                    <p><strong>BTN Press (Behind The Neck Press)</strong> : La barre passe derrière la nuque, alignée avec le deltoïde latéral. Résultat : des épaules larges sans faire les élévations latérales de gros gay.</p>
+                    <p><strong>BTN Press (Behind The Neck Press)</strong> : La barre est alignée avec les fibres du delto latéral. Des milliards de fois plus efficace que ces élévations latérales de gros gay.</p>
                     <p><strong>Soulevé de daronnes (Deadlift)</strong> : Le hinge ultime sous charge. Mouvement de force absolue qui construit des hanches de gorille.
                     <p><strong>Tractions de gay (lestées)</strong> : Complément au rowing pour un dos de gorille. On les appelle ainsi parce que c’est le seul exo que les gays arrivent à faire.</p>
                     <p><strong>RDL de gonzesse (Romanian Deadlift)</strong> : Ischios et chaîne postérieure. Le dos reste sous tension, les trapèzes en feu. <span class="trash-talk">Moins viril qu’un vrai deadlift mais utile.</span></p>
@@ -1899,6 +1899,10 @@ function renderImbalancesAndAccessories(state) {
         workoutScreen.classList.add('hidden');
         chartScreen.classList.add('hidden');
         document.getElementById('logScreen').classList.add('hidden');
+    }
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
     }
 
     init();
