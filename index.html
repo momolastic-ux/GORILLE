@@ -765,8 +765,7 @@ function renderImbalancesAndAccessories(state) {
     function applyProgression(state, results) {
         const w = state.weights;
         const session = state.currentSession;
-        const rHaut = v => Math.round(v / 2.5) * 2.5;
-        const rBas  = v => Math.round(v / 5) * 5;
+        const r2_5 = v => Math.round(v / 2.5) * 2.5;
 
         const lowerBodyKeys = new Set([
             'A_squat_3x3', 'A_squat_backoff',
@@ -775,8 +774,8 @@ function renderImbalancesAndAccessories(state) {
         ]);
 
         const incr = (key, value) => {
-            if (lowerBodyKeys.has(key)) return rBas(value + 5);
-            return rHaut(value + 2.5);
+            if (lowerBodyKeys.has(key)) return r2_5(value + 5);   // +5 kg, arrondi 2.5
+            return r2_5(value + 2.5);                              // +2.5 kg, arrondi 2.5
         };
 
         // Déload en cours
@@ -823,9 +822,9 @@ function renderImbalancesAndAccessories(state) {
                 const success = count > 0 && checkSuccess(fullKey, reps.slice(0, count), [12, 10]);
                 if (success) {
                     if (key === 'stiletto') {
-                        state.accessoryWeights[weightKey] = rBas(state.accessoryWeights[weightKey] + 5);
+                        state.accessoryWeights[weightKey] = r2_5(state.accessoryWeights[weightKey] + 5);
                     } else {
-                        state.accessoryWeights[weightKey] = rHaut(state.accessoryWeights[weightKey] + 2.5);
+                        state.accessoryWeights[weightKey] = r2_5(state.accessoryWeights[weightKey] + 2.5);
                     }
                 }
             }
