@@ -158,14 +158,14 @@
         </div>
     </div>
 
-    <!-- ÉCRAN SUIVI (niveaux + déséquilibres, sans graphique) -->
+        <!-- ÉCRAN SUIVI (niveaux + déséquilibres, sans graphique) -->
     <div id="chartScreen" class="hidden">
         <h2 style="margin-bottom:12px;">📊 Analyse du Gorille</h2>
 
         <!-- 1. Niveaux actuels -->
         <h3 style="margin-bottom:8px;">🏆 Niveaux actuels</h3>
         <table class="level-table" id="levelTable">
-            <thead><tr><th>Lift / Gabarit</th><th>Valeur</th><th>Ratio</th><th>Niveau</th></tr></thead>
+            <thead><tr><th>Lift / Gabarit</th><th>Objectif</th><th>Niveau</th></tr></thead>
             <tbody id="levelTableBody"></tbody>
         </table>
 
@@ -174,39 +174,34 @@
         <table class="level-table" style="font-size:12px;">
             <thead><tr><th>Condition</th><th>Accessoire recommandé</th></tr></thead>
             <tbody>
-                <tr><td>Deadlift / Squat &gt; 1.25</td><td>Squat Stiletto</td></tr>
-                <tr><td>Deadlift / Squat &lt; 0.95</td><td>RDL de gonzesse</td></tr>
-                <tr><td>Squat / OHP &gt; 2.5</td><td>BTN Press</td></tr>
-                <tr><td>Squat / OHP &lt; 1.6</td><td>Squat Stiletto</td></tr>
-                <tr><td>Squat / Row &gt; 1.4</td><td>Tractions de gay</td></tr>
-                <tr><td>Squat / Row &lt; 1.0</td><td>Squat Stiletto</td></tr>
-                <tr><td>Deadlift / Row &gt; 1.6</td><td>Tractions de gay</td></tr>
-                <tr><td>Deadlift / Row &lt; 1.2</td><td>RDL de gonzesse</td></tr>
-                <tr><td>OHP / Row &lt; 0.5</td><td>BTN Press</td></tr>
-                <tr><td>OHP / Row &gt; 0.75</td><td>Tractions de gay</td></tr>
+                <tr><td>Un lift a 1 niveau de retard</td><td>Accessoire pour le lift en retard</td></tr>
+                <tr><td>Squat en retard</td><td>Squat Stiletto</td></tr>
+                <tr><td>Deadlift en retard</td><td>RDL de gonzesse</td></tr>
+                <tr><td>OHP en retard</td><td>BTN Press</td></tr>
+                <tr><td>Rowing en retard</td><td>Tractions de gay</td></tr>
             </tbody>
         </table>
 
-        <!-- 3. Déséquilibres détectés (dynamique) -->
+        <!-- 3. Déséquilibres détectés -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:8px;">
+            <h3 style="margin:0;">⚠️ Déséquilibres détectés</h3>
+            <button id="toggleImbalanceView" class="chart-lift-btn" style="font-size:12px;">Voir objectifs barres</button>
+        </div>
         <div id="imbalanceContainer"></div>
 
-        <!-- 4. Accessoires recommandés (dynamique) -->
+        <!-- 4. Accessoires recommandés -->
         <div id="accessoryContainer"></div>
 
-        <!-- 5. Rappel des paliers de ratio -->
-        <div style="margin-top:16px; background:#f0f2f5; padding:10px; border-radius:12px; font-size:12px;">
-            <strong>📋 Paliers de ratio (poids soulevé / poids de corps)</strong><br>
-            <em>🧒 Gay → 🧚 Fillette → 🤏 Petit zizi → 🗿 Sigma → 💪 Maxi Testo → 🦍 Gorille</em>
-            <table style="width:100%; margin-top:6px; border-collapse:collapse; text-align:center;">
-                <tr style="background:#e2e8f0;"><th>Lift</th><th>Gay</th><th>Fillette</th><th>Petit zizi</th><th>Sigma</th><th>Maxi Testo</th><th>Gorille</th></tr>
-                <tr><td>Squat</td><td>&lt;2.0</td><td>2.0</td><td>2.2</td><td>2.4</td><td>2.6</td><td>≥2.8</td></tr>
-                <tr><td>Soulevé de daronnes</td><td>&lt;2.5</td><td>2.5</td><td>2.7</td><td>2.9</td><td>3.1</td><td>≥3.3</td></tr>
-                <tr><td>OHP</td><td>&lt;1.0</td><td>1.0</td><td>1.1</td><td>1.2</td><td>1.3</td><td>≥1.5</td></tr>
-                <tr><td>Rowing déficit</td><td>&lt;1.2</td><td>1.2</td><td>1.4</td><td>1.6</td><td>1.8</td><td>≥2.0</td></tr>
-                <tr><td>Gabarit</td><td>&lt;14.5</td><td>14.5</td><td>15.5</td><td>16.5</td><td>17.5</td><td>≥18.5</td></tr>
+        <!-- 5. Paliers des niveaux (poids par défaut, toggle ratio) -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:8px;">
+            <h3 style="margin:0;">📋 Paliers des niveaux</h3>
+            <button id="togglePaliersView" class="chart-lift-btn" style="font-size:12px;">Voir en ratios</button>
+        </div>
+        <div id="paliersContainer">
+            <table class="level-table" style="font-size:12px;">
+                <thead><tr><th>Lift</th><th>🧒 Gay</th><th>🧚 Fillette</th><th>🤏 Petit zizi</th><th>🗿 Sigma</th><th>💪 Maxi Testo</th><th>🦍 Gorille</th></tr></thead>
+                <tbody id="paliersTableBody"></tbody>
             </table>
-            <span style="color:#b45309;">🦍 Gorille uniquement si tous les lifts atteignent les ratios ultimes ET que le gabarit est ≥18.5.</span>
-            <div style="margin-top:8px; font-style:italic; color:#7c3aed;">💀 Le squat, c'est le roi. Un vrai homme le pratique pieds au sol, comme un Gorille.</div>
         </div>
 
         <button class="btn-secondary" id="closeChartBtn">Fermer</button>
@@ -392,40 +387,239 @@
         return `<span class="level-badge ${level.class}">${level.emoji} ${level.name}</span>`;
     }
 
-    // ----- AJOUTE LA FONCTION ICI -----
+    // Variables pour les modes d'affichage
+    let imbalanceViewMode = 'simple'; // 'simple' ou 'objectives'
+
     function updateLevelTable(state) {
         const tbody = document.getElementById('levelTableBody');
         if (!tbody) return;
         const bw = state.weight || 85;
         const height = state.height || 180;
         const prs = state.prs || {};
+
         const lifts = [
-            { key: 'squat', name: 'Squat' },
-            { key: 'deadlift', name: 'Soulevé de daronnes' },
-            { key: 'ohp', name: 'OHP' },
-            { key: 'row', name: 'Rowing déficit' }
+            { key: 'squat', name: 'Squat', minRatios: [2.0, 2.2, 2.4, 2.6, 2.8] },
+            { key: 'deadlift', name: 'Soulevé de daronnes', minRatios: [2.5, 2.7, 2.9, 3.1, 3.3] },
+            { key: 'ohp', name: 'OHP', minRatios: [1.0, 1.1, 1.2, 1.3, 1.5] },
+            { key: 'row', name: 'Rowing déficit', minRatios: [1.2, 1.4, 1.6, 1.8, 2.0] }
         ];
+
         let html = '';
         lifts.forEach(l => {
             const val = prs[l.key] || 0;
             const ratio = bw > 0 ? val / bw : 0;
             const level = getLiftLevel(l.key, ratio);
-            html += `<tr>
-                <td>${l.name}</td>
-                <td>${val} kg</td>
-                <td>${ratio.toFixed(2)}x</td>
-                <td>${getLevelBadgeHTML(level)}</td>
-            </tr>`;
+            const currentLevelIndex = levelNames.indexOf(level);
+            let objectif = '';
+            if (currentLevelIndex < levelNames.length - 1) {
+                const nextRatio = l.minRatios[currentLevelIndex];
+                const nextWeight = Math.round(nextRatio * bw);
+                objectif = `<strong>${nextWeight} kg</strong><br><span style="font-size:11px;color:#64748b;">(actuel: ${val} kg · ratio ${ratio.toFixed(2)})</span>`;
+            } else {
+                objectif = `<strong>${val} kg</strong><br><span style="font-size:11px;color:#64748b;">(ratio ${ratio.toFixed(2)})</span>`;
+            }
+            html += `<tr><td>${l.name}</td><td>${objectif}</td><td>${getLevelBadgeHTML(level)}</td></tr>`;
         });
+
         const shapeVal = height > 0 ? bw / (height/100) ** 3 : 0;
         const shapeLevel = getShapeLevel(shapeVal);
-        html += `<tr>
-            <td>Gabarit</td>
-            <td>${bw} kg / ${height} cm</td>
-            <td>${shapeVal.toFixed(2)}</td>
-            <td>${getLevelBadgeHTML(shapeLevel)}</td>
-        </tr>`;
+        const currentShapeIndex = levelNames.indexOf(shapeLevel);
+        let shapeObjectif = '';
+        if (currentShapeIndex < levelNames.length - 1) {
+            const nextShapeRatio = shapeMinRatios[currentShapeIndex];
+            const nextWeight = Math.round(nextShapeRatio * (height/100) ** 3);
+            shapeObjectif = `<strong>${nextWeight} kg</strong><br><span style="font-size:11px;color:#64748b;">(actuel: ${bw} kg · ratio ${shapeVal.toFixed(2)})</span>`;
+        } else {
+            shapeObjectif = `<strong>${bw} kg</strong><br><span style="font-size:11px;color:#64748b;">(ratio ${shapeVal.toFixed(2)})</span>`;
+        }
+        html += `<tr><td>Gabarit</td><td>${shapeObjectif}</td><td>${getLevelBadgeHTML(shapeLevel)}</td></tr>`;
         tbody.innerHTML = html;
+    }
+
+    let paliersViewMode = 'weight'; // 'weight' ou 'ratio'
+
+    function updatePaliersTable(state) {
+        const tbody = document.getElementById('paliersTableBody');
+        if (!tbody) return;
+        const bw = state.weight || 85;
+        const height = state.height || 180;
+        const prs = state.prs || {};
+
+        const lifts = [
+            { key: 'squat', name: 'Squat', minRatios: [2.0, 2.2, 2.4, 2.6, 2.8] },
+            { key: 'deadlift', name: 'Soulevé de daronnes', minRatios: [2.5, 2.7, 2.9, 3.1, 3.3] },
+            { key: 'ohp', name: 'OHP', minRatios: [1.0, 1.1, 1.2, 1.3, 1.5] },
+            { key: 'row', name: 'Rowing déficit', minRatios: [1.2, 1.4, 1.6, 1.8, 2.0] }
+        ];
+
+        let html = '';
+
+        lifts.forEach(l => {
+            const val = prs[l.key] || 0;
+            const ratio = bw > 0 ? val / bw : 0;
+            const level = getLiftLevel(l.key, ratio);
+            const levelIdx = levelNames.indexOf(level);
+
+            html += `<tr><td>${l.name}</td>`;
+            if (paliersViewMode === 'weight') {
+                // Gay : ≤ poids max
+                const gayWeight = Math.round(l.minRatios[0] * bw);
+                const gayCls = (0 === levelIdx) ? ' class="current-level"' : '';
+                html += `<td${gayCls}>≤${gayWeight} kg</td>`;
+                // Fillette à Gorille : juste le poids seuil
+                for (let i = 1; i <= 5; i++) {
+                    const weight = Math.round(l.minRatios[i - 1] * bw);
+                    const cls = (i === levelIdx) ? ' class="current-level"' : '';
+                    html += `<td${cls}>${weight} kg</td>`;
+                }
+            } else {
+                const gayCls = (0 === levelIdx) ? ' class="current-level"' : '';
+                html += `<td${gayCls}>≤${l.minRatios[0].toFixed(1)}</td>`;
+                for (let i = 1; i <= 5; i++) {
+                    const cls = (i === levelIdx) ? ' class="current-level"' : '';
+                    html += `<td${cls}>${l.minRatios[i - 1].toFixed(1)}</td>`;
+                }
+            }
+            html += `</tr>`;
+        });
+
+        // Gabarit
+        const shapeVal = height > 0 ? bw / (height/100) ** 3 : 0;
+        const shapeLevel = getShapeLevel(shapeVal);
+        const shapeIdx = levelNames.indexOf(shapeLevel);
+
+        html += `<tr><td>Gabarit</td>`;
+        if (paliersViewMode === 'weight') {
+            const gayWeight = Math.round(shapeMinRatios[0] * (height/100) ** 3);
+            const gayCls = (0 === shapeIdx) ? ' class="current-level"' : '';
+            html += `<td${gayCls}>≤${gayWeight} kg</td>`;
+            for (let i = 1; i <= 5; i++) {
+                const weight = Math.round(shapeMinRatios[i - 1] * (height/100) ** 3);
+                const cls = (i === shapeIdx) ? ' class="current-level"' : '';
+                html += `<td${cls}>${weight} kg</td>`;
+            }
+        } else {
+            const gayCls = (0 === shapeIdx) ? ' class="current-level"' : '';
+            html += `<td${gayCls}>≤${shapeMinRatios[0].toFixed(1)}</td>`;
+            for (let i = 1; i <= 5; i++) {
+                const cls = (i === shapeIdx) ? ' class="current-level"' : '';
+                html += `<td${cls}>${shapeMinRatios[i - 1].toFixed(1)}</td>`;
+            }
+        }
+        html += `</tr>`;
+
+        tbody.innerHTML = html;
+    }
+
+    function getWeightForLevel(lift, targetLevel, bw) {
+        const mins = liftMinRatios[lift];
+        const targetIndex = levelNames.indexOf(targetLevel);
+        if (targetIndex <= 0) return 0;
+        const ratio = mins[targetIndex - 1];
+        return Math.round(ratio * bw);
+    }
+
+    function renderImbalancesAndAccessories(state) {
+        const container = document.getElementById('imbalanceContainer');
+        const accContainer = document.getElementById('accessoryContainer');
+        container.innerHTML = '';
+        accContainer.innerHTML = '';
+        const prs = state.prs || {};
+        const bw = state.weight || 85;
+        const s = prs.squat || 0;
+        const d = prs.deadlift || 0;
+        const o = prs.ohp || 0;
+        const r = prs.row || 0;
+
+        const analysis = analyzeImbalances(prs);
+
+        if (analysis.results.length === 0) {
+            container.innerHTML = '<div class="info-text">✅ Aucun déséquilibre détecté. Continue comme ça, gorille !</div>';
+        } else {
+            let html = '';
+
+            if (imbalanceViewMode === 'simple') {
+                analysis.results.forEach(res => {
+                    const cls = res.type === 'bad' ? 'bad' : 'warn';
+                    html += `<div class="imbalance-card ${cls}">${res.msg}</div>`;
+                });
+            } else {
+                const targets = {};
+                const levelIndex = (level) => levelNames.indexOf(level);
+                const squatLevel = getLiftLevel('squat', bw > 0 ? s / bw : 0);
+                const deadLevel = getLiftLevel('deadlift', bw > 0 ? d / bw : 0);
+                const ohpLevel = getLiftLevel('ohp', bw > 0 ? o / bw : 0);
+                const rowLevel = getLiftLevel('row', bw > 0 ? r / bw : 0);
+
+                analysis.results.forEach(res => {
+                    const msg = res.msg;
+                    let lift = '', currentVal = 0, targetLevel = null;
+
+                    if (msg.includes('squat') && (msg.includes('avance sur ton squat') || msg.includes('ton squat a'))) {
+                        lift = 'squat'; currentVal = s;
+                        if (msg.includes('deadlift')) targetLevel = deadLevel;
+                        else if (msg.includes('OHP')) targetLevel = ohpLevel;
+                        else if (msg.includes('rowing')) targetLevel = rowLevel;
+                        else targetLevel = levelNames[Math.max(0, levelIndex(squatLevel) - 1)];
+                    } else if (msg.includes('deadlift') && (msg.includes('avance sur ton deadlift') || msg.includes('ton deadlift a'))) {
+                        lift = 'deadlift'; currentVal = d;
+                        if (msg.includes('squat')) targetLevel = squatLevel;
+                        else if (msg.includes('rowing')) targetLevel = rowLevel;
+                        else targetLevel = levelNames[Math.max(0, levelIndex(deadLevel) - 1)];
+                    } else if (msg.includes('OHP') && (msg.includes('avance sur ton OHP') || msg.includes('ton OHP a'))) {
+                        lift = 'ohp'; currentVal = o;
+                        if (msg.includes('rowing')) targetLevel = rowLevel;
+                        else targetLevel = levelNames[Math.max(0, levelIndex(ohpLevel) - 1)];
+                    } else if (msg.includes('rowing') && (msg.includes('avance sur ton rowing') || msg.includes('ton rowing a'))) {
+                        lift = 'row'; currentVal = r;
+                        if (msg.includes('OHP')) targetLevel = ohpLevel;
+                        else targetLevel = levelNames[Math.max(0, levelIndex(rowLevel) - 1)];
+                    }
+
+                    if (lift && targetLevel) {
+                        const targetWeight = getWeightForLevel(lift, targetLevel, bw);
+                        if (!targets[lift] || targetWeight > targets[lift].target) {
+                            targets[lift] = { current: currentVal, target: targetWeight, lift };
+                        }
+                    }
+                });
+
+                const liftNames = { squat: 'Squat', deadlift: 'Deadlift', ohp: 'OHP', row: 'Rowing' };
+                for (const [lift, data] of Object.entries(targets)) {
+                    const diff = data.target - data.current;
+                    const name = liftNames[lift];
+                    html += `<div class="imbalance-card bad">
+                        <div style="font-weight:700; margin-bottom:4px;">${name} à atteindre : <strong>${data.target} kg</strong> (actuel : ${data.current} kg)</div>
+                        <div style="font-size:12px; color:#64748b;">Rattrape <strong>${diff} kg</strong> pour corriger le déséquilibre.</div>
+                    </div>`;
+                }
+            }
+
+            container.innerHTML = html;
+        }
+
+        const toggleBtn = document.getElementById('toggleImbalanceView');
+        if (toggleBtn) {
+            toggleBtn.textContent = imbalanceViewMode === 'simple' ? 'Voir objectifs barres' : 'Voir ratios';
+        }
+
+        if (analysis.accessories.length > 0) {
+            const accWeights = state.accessoryWeights || { tractions: 20, rdl: 100, btn: 40, stiletto: 100 };
+            let accHtml = '<div style="margin-top:16px;"><strong>🔧 Accessoires recommandés (poids actuels)</strong></div>';
+            analysis.accessories.forEach(key => {
+                let name = '', target = '', weight = 0;
+                if (key === 'tractions') { name = 'Tractions de gay'; target = 'dos'; weight = accWeights.tractions; }
+                else if (key === 'rdl') { name = 'RDL de gonzesse'; target = 'ischios'; weight = accWeights.rdl; }
+                else if (key === 'btn') { name = 'BTN Press'; target = 'épaules'; weight = accWeights.btn; }
+                else if (key === 'stiletto') { name = 'Squat Stiletto'; target = 'quads'; weight = accWeights.stiletto; }
+                accHtml += `<div class="accessory-card">
+                    <div class="title">${name}</div>
+                    <div class="detail">🎯 ${target}</div>
+                    <div class="detail" style="color:#1d4ed8; font-weight:600;">Charge actuelle : ${weight} kg</div>
+                </div>`;
+            });
+            accContainer.innerHTML = accHtml;
+        }
     }
 
 
@@ -437,99 +631,46 @@
         const d = prs.deadlift || 0;
         const o = prs.ohp || 0;
         const r = prs.row || 0;
+        const bw = prs.weight || 85;
         const results = [];
         const accessories = [];
-        if (s > 0 && d > 0) {
-            const ratio = d / s;
-            if (ratio > 1.25) {
-                results.push({ type: 'bad', msg: '💀 Ton deadlift écrase ton squat (ratio '+ratio.toFixed(2)+'). Ajoute du Squat Stiletto.' });
-                accessories.push('stiletto');
-            } else if (ratio < 0.95) {
-                results.push({ type: 'bad', msg: '💀 Ton deadlift est à la ramasse (ratio '+ratio.toFixed(2)+'). Ajoute du RDL de gonzesse.' });
-                accessories.push('rdl');
-            }
+
+        const levelIndex = (level) => levelNames.indexOf(level);
+        const squatLevel = getLiftLevel('squat', bw > 0 ? s / bw : 0);
+        const deadLevel = getLiftLevel('deadlift', bw > 0 ? d / bw : 0);
+        const ohpLevel = getLiftLevel('ohp', bw > 0 ? o / bw : 0);
+        const rowLevel = getLiftLevel('row', bw > 0 ? r / bw : 0);
+
+        const maxIndex = Math.max(
+            levelIndex(squatLevel),
+            levelIndex(deadLevel),
+            levelIndex(ohpLevel),
+            levelIndex(rowLevel)
+        );
+
+        // Squat en retard ?
+        if (levelIndex(squatLevel) < maxIndex) {
+            results.push({ type: 'bad', msg: `💀 Squat en retard (${squatLevel.name}). Ajoute du Squat Stiletto.` });
+            accessories.push('stiletto');
         }
-        if (s > 0 && o > 0) {
-            const ratio = s / o;
-            if (ratio > 2.5) {
-                results.push({ type: 'bad', msg: '💪 Squat de gorille mais épaules de crevette (ratio '+ratio.toFixed(2)+'). Ajoute du BTN Press.' });
-                accessories.push('btn');
-            } else if (ratio < 1.6) {
-                results.push({ type: 'bad', msg: '💪 Épaules de gorille mais jambes de coq (ratio '+ratio.toFixed(2)+'). Ajoute du Squat Stiletto.' });
-                accessories.push('stiletto');
-            }
+        // Deadlift en retard ?
+        if (levelIndex(deadLevel) < maxIndex) {
+            results.push({ type: 'bad', msg: `💀 Deadlift en retard (${deadLevel.name}). Ajoute du RDL de gonzesse.` });
+            accessories.push('rdl');
         }
-        if (s > 0 && r > 0) {
-            const ratio = s / r;
-            if (ratio > 1.4) {
-                results.push({ type: 'bad', msg: '🦍 Squat de mammouth mais dos de crevette (ratio '+ratio.toFixed(2)+'). Ajoute des Tractions de gay.' });
-                accessories.push('tractions');
-            } else if (ratio < 1.0) {
-                results.push({ type: 'bad', msg: '🦍 Dos de baraqué mais jambes de coq (ratio '+ratio.toFixed(2)+'). Ajoute du Squat Stiletto.' });
-                accessories.push('stiletto');
-            }
+        // OHP en retard ?
+        if (levelIndex(ohpLevel) < maxIndex) {
+            results.push({ type: 'bad', msg: `💪 OHP en retard (${ohpLevel.name}). Ajoute du BTN Press.` });
+            accessories.push('btn');
         }
-        if (d > 0 && r > 0) {
-            const ratio = d / r;
-            if (ratio > 1.6) {
-                results.push({ type: 'bad', msg: '🦍 Deadlift de géant mais row de crevette (ratio '+ratio.toFixed(2)+'). Ajoute des Tractions de gay.' });
-                accessories.push('tractions');
-            } else if (ratio < 1.2) {
-                results.push({ type: 'bad', msg: '🦍 Row de gorille mais deadlift de fillette (ratio '+ratio.toFixed(2)+'). Ajoute du RDL de gonzesse.' });
-                accessories.push('rdl');
-            }
+        // Rowing en retard ?
+        if (levelIndex(rowLevel) < maxIndex) {
+            results.push({ type: 'bad', msg: `🦍 Rowing en retard (${rowLevel.name}). Ajoute des Tractions de gay.` });
+            accessories.push('tractions');
         }
-        if (o > 0 && r > 0) {
-            const ratio = o / r;
-            if (ratio < 0.5) {
-                results.push({ type: 'warn', msg: '⚡ Row de bœuf mais OHP de rougette (ratio '+ratio.toFixed(2)+'). Ajoute du BTN Press.' });
-                accessories.push('btn');
-            } else if (ratio > 0.75) {
-                results.push({ type: 'warn', msg: '⚡ OHP de baraqué mais row de fillette (ratio '+ratio.toFixed(2)+'). Ajoute des Tractions de gay.' });
-                accessories.push('tractions');
-            }
-        }
+
         const uniqueAccessories = [...new Set(accessories)];
         return { results, accessories: uniqueAccessories };
-    }
-
-function renderImbalancesAndAccessories(state) {
-        const container = document.getElementById('imbalanceContainer');
-        const accContainer = document.getElementById('accessoryContainer');
-        container.innerHTML = '';
-        accContainer.innerHTML = '';
-        const prs = state.prs || {};
-        prs.weight = state.weight || 85;
-        const analysis = analyzeImbalances(prs);
-
-        if (analysis.results.length === 0) {
-            container.innerHTML = '<div class="info-text">✅ Aucun déséquilibre détecté. Continue comme ça, gorille !</div>';
-        } else {
-            let html = '<div style="margin-top:12px;"><strong>⚠️ Déséquilibres détectés</strong></div>';
-            analysis.results.forEach(r => {
-                const cls = r.type === 'bad' ? 'bad' : 'warn';
-                html += `<div class="imbalance-card ${cls}">${r.msg}</div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        if (analysis.accessories.length > 0) {
-            const accWeights = state.accessoryWeights || { tractions: 20, rdl: 100, btn: 40, stiletto: 100 };
-            let accHtml = '<div style="margin-top:16px;"><strong>🔧 Accessoires recommandés (2× échec, seuil > 15 reps total)</strong></div>';
-            analysis.accessories.forEach(key => {
-                let name = '', target = '', weight = 0, reason = '';
-                if (key === 'tractions') { name = 'Tractions de gay'; target = 'dos'; weight = accWeights.tractions; reason = 'Pour un dos de gorille.'; }
-                else if (key === 'rdl') { name = 'RDL de gonzesse'; target = 'ischios'; weight = accWeights.rdl; reason = 'Muscle ces ischios.'; }
-                else if (key === 'btn') { name = 'BTN Press'; target = 'épaules'; weight = accWeights.btn; reason = 'Épaules larges.'; }
-                else if (key === 'stiletto') { name = 'Squat Stiletto'; target = 'quads'; weight = accWeights.stiletto; reason = 'Gonfle ces quads.'; }
-                accHtml += `<div class="accessory-card">
-                    <div class="title">${name}</div>
-                    <div class="detail">🎯 ${target} – ${reason}</div>
-                    <div class="detail" style="color:#1d4ed8; font-weight:600;">Charge : ${weight} kg</div>
-                </div>`;
-            });
-            accContainer.innerHTML = accHtml;
-        }
     }
 
     // ======================================================================
@@ -774,11 +915,10 @@ function renderImbalancesAndAccessories(state) {
         ]);
 
         const incr = (key, value) => {
-            if (lowerBodyKeys.has(key)) return r2_5(value + 5);   // +5 kg, arrondi 2.5
-            return r2_5(value + 2.5);                              // +2.5 kg, arrondi 2.5
+            if (lowerBodyKeys.has(key)) return r2_5(value + 5);
+            return r2_5(value + 2.5);
         };
 
-        // Déload en cours
         if (state.deloadActive && state.deloadSessionsRemaining > 0) {
             state.deloadSessionsRemaining--;
             if (state.deloadSessionsRemaining === 0) {
@@ -797,13 +937,9 @@ function renderImbalancesAndAccessories(state) {
         if (!state.lastReps) state.lastReps = {};
         const sessionReps = {};
 
-        // Sauvegarde silencieuse des reps avec la charge associée
         const saveRepsWithWeight = (key, weight, repsArray) => {
             if (repsArray && repsArray.length > 0) {
-                sessionReps[key] = {
-                    reps: repsArray,
-                    weight: weight
-                };
+                sessionReps[key] = { reps: repsArray, weight: weight };
             }
         };
 
@@ -818,13 +954,14 @@ function renderImbalancesAndAccessories(state) {
                 const fullKey = prefix + '_' + key;
                 const count = results[fullKey + '_count'] || 0;
                 const reps = results[fullKey] || [];
-                saveRepsWithWeight(fullKey, state.accessoryWeights[weightKey], reps.slice(0, count));
+                const currentWeight = state.accessoryWeights[weightKey];
+                saveRepsWithWeight(fullKey, currentWeight, reps.slice(0, count));
                 const success = count > 0 && checkSuccess(fullKey, reps.slice(0, count), [12, 10]);
                 if (success) {
                     if (key === 'stiletto') {
-                        state.accessoryWeights[weightKey] = r2_5(state.accessoryWeights[weightKey] + 5);
+                        state.accessoryWeights[weightKey] = r2_5(currentWeight + 5);
                     } else {
-                        state.accessoryWeights[weightKey] = r2_5(state.accessoryWeights[weightKey] + 2.5);
+                        state.accessoryWeights[weightKey] = r2_5(currentWeight + 2.5);
                     }
                 }
             }
@@ -833,78 +970,85 @@ function renderImbalancesAndAccessories(state) {
         const logEntry = { date: new Date().toISOString().slice(0, 10), session, exercises: [] };
 
         if (session === 'A') {
-            saveRepsWithWeight('A_row', w.A_row_echec, results['A_row']);
+            const rowWeight = w.A_row_echec;
+            saveRepsWithWeight('A_row', rowWeight, results['A_row']);
             const rowOk = checkSuccess('A_row', results['A_row'], [12, 10]);
-            if (rowOk) w.A_row_echec = incr('A_row_echec', w.A_row_echec);
-            logEntry.exercises.push({ name: 'Rowing déficit', type: '2× échec', weight: w.A_row_echec, reps: results['A_row']?.join('/') || '-' });
+            if (rowOk) w.A_row_echec = incr('A_row_echec', rowWeight);
+            logEntry.exercises.push({ name: 'Rowing déficit', type: '2× échec', weight: rowWeight, reps: results['A_row']?.join('/') || '-' });
 
-            saveRepsWithWeight('A_squat_3x3', w.A_squat_3x3, results['A_squat_3x3']);
+            const squatWeight = w.A_squat_3x3;
+            saveRepsWithWeight('A_squat_3x3', squatWeight, results['A_squat_3x3']);
             const squatOk = checkSuccess('A_squat_3x3', results['A_squat_3x3'], [3,3,3]);
             state.topSetHistory.squat.push(squatOk);
-            if (squatOk) w.A_squat_3x3 = incr('A_squat_3x3', w.A_squat_3x3);
-            logEntry.exercises.push({ name: 'Squat LB', type: '3×3', weight: w.A_squat_3x3, reps: results['A_squat_3x3']?.join('/') || '-' });
+            if (squatOk) w.A_squat_3x3 = incr('A_squat_3x3', squatWeight);
+            logEntry.exercises.push({ name: 'Squat LB', type: '3×3', weight: squatWeight, reps: results['A_squat_3x3']?.join('/') || '-' });
 
-            saveRepsWithWeight('A_squat_backoff', w.A_squat_backoff, results['A_squat_backoff']);
+            const backWeight = w.A_squat_backoff;
+            saveRepsWithWeight('A_squat_backoff', backWeight, results['A_squat_backoff']);
             const backOk = checkSuccess('A_squat_backoff', results['A_squat_backoff'], [12]);
-            if (backOk) w.A_squat_backoff = incr('A_squat_backoff', w.A_squat_backoff);
-            logEntry.exercises.push({ name: 'Squat LB (backoff)', type: '1× échec', weight: w.A_squat_backoff, reps: results['A_squat_backoff']?.[0] || '-' });
+            if (backOk) w.A_squat_backoff = incr('A_squat_backoff', backWeight);
+            logEntry.exercises.push({ name: 'Squat LB (backoff)', type: '1× échec (backoff)', weight: backWeight, reps: results['A_squat_backoff']?.[0] || '-' });
 
-            saveRepsWithWeight('A_ohp_5x5', w.A_ohp_5x5, results['A_ohp_5x5']);
+            const ohpWeight = w.A_ohp_5x5;
+            saveRepsWithWeight('A_ohp_5x5', ohpWeight, results['A_ohp_5x5']);
             const ohpOk = checkSuccess('A_ohp_5x5', results['A_ohp_5x5'], [5,5,5,5,5]);
             state.fiveRepsHistory.ohp.push(ohpOk);
-            if (ohpOk) w.A_ohp_5x5 = incr('A_ohp_5x5', w.A_ohp_5x5);
-            logEntry.exercises.push({ name: 'OHP', type: '5×5', weight: w.A_ohp_5x5, reps: results['A_ohp_5x5']?.join('/') || '-' });
+            if (ohpOk) w.A_ohp_5x5 = incr('A_ohp_5x5', ohpWeight);
+            logEntry.exercises.push({ name: 'OHP', type: '5×5', weight: ohpWeight, reps: results['A_ohp_5x5']?.join('/') || '-' });
 
             processAccessories('A_acc');
         }
         else if (session === 'B') {
-            saveRepsWithWeight('B_row_3x3', state.rowNonStrict ? w.B_row_3x3_non_strict : w.B_row_3x3, results['B_row_3x3']);
+            const rowWeight = state.rowNonStrict ? w.B_row_3x3_non_strict : w.B_row_3x3;
+            saveRepsWithWeight('B_row_3x3', rowWeight, results['B_row_3x3']);
             const rowOk = checkSuccess('B_row_3x3', results['B_row_3x3'], [3,3,3]);
             state.topSetHistory.row.push(rowOk);
             if (rowOk) {
                 const rowKey = state.rowNonStrict ? 'B_row_3x3_non_strict' : 'B_row_3x3';
-                w[rowKey] = incr(rowKey, w[rowKey]);
+                w[rowKey] = incr(rowKey, rowWeight);
             }
-            logEntry.exercises.push({
-                name: 'Rowing déficit',
-                type: '3×3' + (state.rowNonStrict ? ' (non strict)' : ''),
-                weight: state.rowNonStrict ? w.B_row_3x3_non_strict : w.B_row_3x3,
-                reps: results['B_row_3x3']?.join('/') || '-'
-            });
+            logEntry.exercises.push({ name: 'Rowing déficit', type: '3×3' + (state.rowNonStrict ? ' (non strict)' : ''), weight: rowWeight, reps: results['B_row_3x3']?.join('/') || '-' });
 
-            saveRepsWithWeight('B_row_backoff', w.B_row_backoff, results['B_row_backoff']);
+            const backWeight = w.B_row_backoff;
+            saveRepsWithWeight('B_row_backoff', backWeight, results['B_row_backoff']);
             const backOk = checkSuccess('B_row_backoff', results['B_row_backoff'], [12]);
-            if (backOk) w.B_row_backoff = incr('B_row_backoff', w.B_row_backoff);
-            logEntry.exercises.push({ name: 'Rowing déficit (backoff)', type: '1× échec', weight: w.B_row_backoff, reps: results['B_row_backoff']?.[0] || '-' });
+            if (backOk) w.B_row_backoff = incr('B_row_backoff', backWeight);
+            logEntry.exercises.push({ name: 'Rowing déficit (backoff)', type: '1× échec (backoff)', weight: backWeight, reps: results['B_row_backoff']?.[0] || '-' });
 
-            saveRepsWithWeight('B_squat_5x5', w.B_squat_5x5, results['B_squat_5x5']);
+            const squatWeight = w.B_squat_5x5;
+            saveRepsWithWeight('B_squat_5x5', squatWeight, results['B_squat_5x5']);
             const squatOk = checkSuccess('B_squat_5x5', results['B_squat_5x5'], [5,5,5,5,5]);
             state.fiveRepsHistory.squat.push(squatOk);
-            if (squatOk) w.B_squat_5x5 = incr('B_squat_5x5', w.B_squat_5x5);
-            logEntry.exercises.push({ name: 'Squat LB', type: '5×5', weight: w.B_squat_5x5, reps: results['B_squat_5x5']?.join('/') || '-' });
+            if (squatOk) w.B_squat_5x5 = incr('B_squat_5x5', squatWeight);
+            logEntry.exercises.push({ name: 'Squat LB', type: '5×5', weight: squatWeight, reps: results['B_squat_5x5']?.join('/') || '-' });
 
-            saveRepsWithWeight('B_btn', w.B_btn_echec, results['B_btn']);
+            const btnWeight = w.B_btn_echec;
+            saveRepsWithWeight('B_btn', btnWeight, results['B_btn']);
             const btnOk = checkSuccess('B_btn', results['B_btn'], [12, 10]);
-            if (btnOk) w.B_btn_echec = incr('B_btn_echec', w.B_btn_echec);
-            logEntry.exercises.push({ name: 'BTN Press', type: '2× échec', weight: w.B_btn_echec, reps: results['B_btn']?.join('/') || '-' });
+            if (btnOk) w.B_btn_echec = incr('B_btn_echec', btnWeight);
+            logEntry.exercises.push({ name: 'BTN Press', type: '2× échec', weight: btnWeight, reps: results['B_btn']?.join('/') || '-' });
 
             processAccessories('B_acc');
         }
         else if (session === 'C') {
-            saveRepsWithWeight('C_row_5x5', w.C_row_5x5, results['C_row_5x5']);
+            const rowWeight = w.C_row_5x5;
+            saveRepsWithWeight('C_row_5x5', rowWeight, results['C_row_5x5']);
             const rowOk = checkSuccess('C_row_5x5', results['C_row_5x5'], [5,5,5,5,5]);
             state.fiveRepsHistory.row.push(rowOk);
-            if (rowOk) w.C_row_5x5 = incr('C_row_5x5', w.C_row_5x5);
-            logEntry.exercises.push({ name: 'Rowing déficit', type: '5×5', weight: w.C_row_5x5, reps: results['C_row_5x5']?.join('/') || '-' });
+            if (rowOk) w.C_row_5x5 = incr('C_row_5x5', rowWeight);
+            logEntry.exercises.push({ name: 'Rowing déficit', type: '5×5', weight: rowWeight, reps: results['C_row_5x5']?.join('/') || '-' });
 
             const week = state.dlWeek;
-            const dlMain = w.dl_main[week];
-            saveRepsWithWeight('C_deadlift', dlMain, results['C_deadlift']);
+            const dlWeight = w.dl_main[week];
+            saveRepsWithWeight('C_deadlift', dlWeight, results['C_deadlift']);
             const dlTargets = week === 0 ? [5,5,5] : week === 1 ? [5,5,5,5] : week === 2 ? [3,3,3] : [2,2];
             const dlOk = checkSuccess('C_deadlift', results['C_deadlift'], dlTargets);
             const needBackoff = (week === 2 || week === 3);
             const backoffOk = !needBackoff || checkSuccess('C_deadlift_back', results['C_deadlift_back'] || [], [5,5]);
-            if (w.dl_back[week] > 0) saveRepsWithWeight('C_deadlift_back', w.dl_back[week], results['C_deadlift_back']);
+            if (w.dl_back[week] > 0) {
+                const backoffWeight = w.dl_back[week];
+                saveRepsWithWeight('C_deadlift_back', backoffWeight, results['C_deadlift_back']);
+            }
 
             if (dlOk && backoffOk) {
                 if (week < 3) state.dlWeek = week + 1;
@@ -917,47 +1061,44 @@ function renderImbalancesAndAccessories(state) {
             }
 
             const struct = ['3×5', '4×5', '3×3', '3×2'][state.dlWeek];
-            logEntry.exercises.push({ name: 'Soulevé de daronnes', type: struct, weight: w.dl_main[week], reps: results['C_deadlift']?.join('/') || '-' });
+            logEntry.exercises.push({ name: 'Soulevé de daronnes', type: struct, weight: dlWeight, reps: results['C_deadlift']?.join('/') || '-' });
             if (w.dl_back[week] > 0) {
-                logEntry.exercises.push({ name: 'Soulevé de daronnes (backoff)', type: '2×5', weight: w.dl_back[week], reps: results['C_deadlift_back']?.join('/') || '-' });
+                logEntry.exercises.push({ name: 'Soulevé de daronnes (backoff)', type: '2×5 (backoff)', weight: w.dl_back[week], reps: results['C_deadlift_back']?.join('/') || '-' });
             }
 
-            saveRepsWithWeight('C_ohp_3x3', w.C_ohp_3x3, results['C_ohp_3x3']);
+            const ohpWeight = w.C_ohp_3x3;
+            saveRepsWithWeight('C_ohp_3x3', ohpWeight, results['C_ohp_3x3']);
             const ohpOk = checkSuccess('C_ohp_3x3', results['C_ohp_3x3'], [3,3,3]);
             state.topSetHistory.ohp.push(ohpOk);
-            if (ohpOk) w.C_ohp_3x3 = incr('C_ohp_3x3', w.C_ohp_3x3);
-            logEntry.exercises.push({ name: 'OHP', type: '3×3', weight: w.C_ohp_3x3, reps: results['C_ohp_3x3']?.join('/') || '-' });
+            if (ohpOk) w.C_ohp_3x3 = incr('C_ohp_3x3', ohpWeight);
+            logEntry.exercises.push({ name: 'OHP', type: '3×3', weight: ohpWeight, reps: results['C_ohp_3x3']?.join('/') || '-' });
 
-            saveRepsWithWeight('C_ohp_backoff', w.C_ohp_backoff, results['C_ohp_backoff']);
+            const ohpBackWeight = w.C_ohp_backoff;
+            saveRepsWithWeight('C_ohp_backoff', ohpBackWeight, results['C_ohp_backoff']);
             const ohpBackOk = checkSuccess('C_ohp_backoff', results['C_ohp_backoff'], [12]);
-            if (ohpBackOk) w.C_ohp_backoff = incr('C_ohp_backoff', w.C_ohp_backoff);
-            logEntry.exercises.push({ name: 'OHP (backoff)', type: '1× échec', weight: w.C_ohp_backoff, reps: results['C_ohp_backoff']?.[0] || '-' });
+            if (ohpBackOk) w.C_ohp_backoff = incr('C_ohp_backoff', ohpBackWeight);
+            logEntry.exercises.push({ name: 'OHP (backoff)', type: '1× échec (backoff)', weight: ohpBackWeight, reps: results['C_ohp_backoff']?.[0] || '-' });
 
+            const stilettoWeight = w.C_stiletto_echec;
             const stilettoCount = results['C_stiletto_count'] || 1;
-            saveRepsWithWeight('C_stiletto', w.C_stiletto_echec, results['C_stiletto']?.slice(0, stilettoCount));
+            saveRepsWithWeight('C_stiletto', stilettoWeight, results['C_stiletto']?.slice(0, stilettoCount));
             const stilettoOk = checkSuccess('C_stiletto', results['C_stiletto']?.slice(0, stilettoCount), [12, 10].slice(0, stilettoCount));
-            if (stilettoOk) w.C_stiletto_echec = incr('C_stiletto_echec', w.C_stiletto_echec);
-            logEntry.exercises.push({ name: 'Squat Stiletto', type: `${stilettoCount}× échec`, weight: w.C_stiletto_echec, reps: results['C_stiletto']?.slice(0, stilettoCount).join('/') || '-' });
+            if (stilettoOk) w.C_stiletto_echec = incr('C_stiletto_echec', stilettoWeight);
+            logEntry.exercises.push({ name: 'Squat Stiletto', type: `${stilettoCount}× échec`, weight: stilettoWeight, reps: results['C_stiletto']?.slice(0, stilettoCount).join('/') || '-' });
 
             processAccessories('C_acc');
         }
 
-        // Mise à jour silencieuse de lastReps
         Object.assign(state.lastReps, sessionReps);
 
-        // Ajout des accessoires dans le log
-        const accNames = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
+        const accNames = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto (accessoire)' };
         for (const [key, name] of Object.entries(accNames)) {
             const fullKey = session + '_acc_' + key;
             const count = results[fullKey + '_count'] || 0;
             if (count > 0) {
+                const currentWeight = state.accessoryWeights[key];
                 const reps = results[fullKey]?.slice(0, count).join('/') || '-';
-                logEntry.exercises.push({
-                    name: name,
-                    type: `${count}× échec`,
-                    weight: state.accessoryWeights[key],
-                    reps: reps
-                });
+                logEntry.exercises.push({ name: name, type: `${count}× échec`, weight: currentWeight, reps: reps });
             }
         }
 
@@ -1095,9 +1236,7 @@ function renderImbalancesAndAccessories(state) {
             const parts = ex.detail.split('@');
             const label = parts[0].trim();
             const weight = parts[1] ? parts[1].trim() : '';
-            card.innerHTML = `
-                <div class="card-title"><span>${ex.title}</span><span class="green-tag">${label}</span></div>
-                <div class="card-detail"><span>Charge</span><span class="highlight">${weight}</span></div>`;
+            card.innerHTML = `<div class="card-title"><span>${ex.title}</span><span class="green-tag">${label}</span></div><div class="card-detail"><span>Charge</span><span class="highlight">${weight}</span></div>`;
             list.appendChild(card);
         });
 
@@ -1111,16 +1250,11 @@ function renderImbalancesAndAccessories(state) {
             accTitle.style.cssText = 'margin-top:16px; font-weight:700; color:#1e3a5f;';
             accTitle.textContent = '🔧 Accessoires (choisis 0, 1 ou 2 séries)';
             list.appendChild(accTitle);
-
             analysis.accessories.forEach(key => {
                 const names = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
-                const targets = { tractions: 'dos', rdl: 'ischios', btn: 'épaules', stiletto: 'quads' };
                 const card = document.createElement('div');
                 card.className = 'accessory-card';
-                card.innerHTML = `
-                    <div class="title">${names[key]}</div>
-                    <div class="detail">🎯 ${targets[key]}</div>
-                    <div class="detail" style="color:#1d4ed8; font-weight:600;">Poids : ${accWeights[key]} kg</div>`;
+                card.innerHTML = `<div class="title">${names[key]}</div><div class="detail" style="color:#1d4ed8; font-weight:600;">Poids : ${accWeights[key]} kg</div>`;
                 list.appendChild(card);
             });
         }
@@ -1148,121 +1282,166 @@ function renderImbalancesAndAccessories(state) {
                 showToast('🔽 Gayload activé !');
                 stagnationAlert.classList.add('hidden');
             };
-            document.getElementById('declineDeloadBtn').onclick = () => {
-                stagnationAlert.classList.add('hidden');
-            };
+            document.getElementById('declineDeloadBtn').onclick = () => stagnationAlert.classList.add('hidden');
         } else {
             stagnationAlert.classList.add('hidden');
         }
 
-        // ---------- FORMULAIRE ----------
         const form = document.getElementById('dynamicInputs');
         form.innerHTML = '';
 
-        // Sélecteur pour les séries à reps fixes (0 -> maxReps)
-        const seriesFixedSelects = (prefix, count, maxReps, lastRepsArray) => {
-            let s = '';
-            for (let i = 0; i < count; i++) {
-                const last = (lastRepsArray && lastRepsArray[i] !== undefined) ? lastRepsArray[i] : '-';
-                let options = `<option value="" selected disabled>Reps</option>`;
-                for (let r = 0; r <= maxReps; r++) {
-                    options += `<option value="${r}">${r}</option>`;
+        // --- RECHERCHE DE LA DERNIÈRE PERF AU MÊME POIDS ET MÊME TYPE D'EXO ---
+        const getLastRepsAtSameWeight = (exoKey, currentWeight) => {
+            if (state.trainingLog) {
+                for (let i = state.trainingLog.length - 1; i >= 0; i--) {
+                    const entry = state.trainingLog[i];
+                    for (const ex of entry.exercises) {
+                        if (ex.weight !== currentWeight) continue;
+                        if (matchExo(ex, exoKey)) {
+                            if (typeof ex.reps === 'string' && ex.reps.includes('/')) {
+                                return ex.reps.split('/').map(Number).filter(n => !isNaN(n));
+                            } else if (!isNaN(Number(ex.reps))) {
+                                return [Number(ex.reps)];
+                            }
+                        }
+                    }
                 }
-                s += `<div class="input-row" style="align-items:center;">
-                    <label style="min-width:auto;">Série ${i+1}</label>
-                    <select id="${prefix}_${i}" style="width:80px;">${options}</select>
-                    <span style="font-size:12px; color:#64748b;">Dernière: ${last} reps</span>
-                </div>`;
             }
-            return s;
+            return null;
         };
 
-        // Champ libre pour les séries à l'échec / accessoires
-        const seriesFreeInputs = (prefix, count, lastRepsArray, thresholds) => {
+        const matchExo = (ex, exoKey) => {
+            const name = ex.name.toLowerCase();
+            const type = ex.type.toLowerCase();
+
+            // Squat LB 3×3 (principal)
+            if (exoKey === 'A_squat_3x3') return name.includes('squat lb') && type.includes('3×3') && !type.includes('backoff');
+            // Squat LB backoff
+            if (exoKey === 'A_squat_backoff') return name.includes('squat lb') && type.includes('backoff');
+            // OHP 5×5
+            if (exoKey === 'A_ohp_5x5') return name.includes('ohp') && type.includes('5×5');
+            // Rowing 2× échec
+            if (exoKey === 'A_row') return name.includes('rowing') && type.includes('2× échec');
+
+            // Rowing 3×3
+            if (exoKey === 'B_row_3x3') return name.includes('rowing') && type.includes('3×3') && !type.includes('backoff');
+            // Rowing backoff
+            if (exoKey === 'B_row_backoff') return name.includes('rowing') && type.includes('backoff');
+            // Squat LB 5×5
+            if (exoKey === 'B_squat_5x5') return name.includes('squat lb') && type.includes('5×5');
+            // BTN Press 2× échec
+            if (exoKey === 'B_btn') return name.includes('btn press') && type.includes('2× échec');
+
+            // Rowing 5×5
+            if (exoKey === 'C_row_5x5') return name.includes('rowing') && type.includes('5×5');
+            // Soulevé de daronnes (principal)
+            if (exoKey === 'C_deadlift') return name.includes('soulevé') && !type.includes('backoff');
+            // Soulevé de daronnes backoff
+            if (exoKey === 'C_deadlift_back') return name.includes('soulevé') && type.includes('backoff');
+            // OHP 3×3
+            if (exoKey === 'C_ohp_3x3') return name.includes('ohp') && type.includes('3×3') && !type.includes('backoff');
+            // OHP backoff
+            if (exoKey === 'C_ohp_backoff') return name.includes('ohp') && type.includes('backoff');
+            // Squat Stiletto (principal)
+            if (exoKey === 'C_stiletto') return name.includes('stiletto') && !type.includes('accessoire');
+
+            // Accessoires (avec "(accessoire)" pour différencier du principal)
+            if (exoKey.includes('_acc_tractions')) return name.includes('tractions de gay');
+            if (exoKey.includes('_acc_rdl')) return name.includes('rdl de gonzesse');
+            if (exoKey.includes('_acc_btn')) return name.includes('btn press');
+            if (exoKey.includes('_acc_stiletto')) return name.includes('stiletto') && name.includes('accessoire');
+
+            return false;
+        };
+
+        const seriesFixedSelects = (prefix, count, maxReps, currentWeight) => {
+            const exoKey = prefix.replace('i_', '');
+            const reps = getLastRepsAtSameWeight(exoKey, currentWeight) || [];
             let s = '';
             for (let i = 0; i < count; i++) {
-                const last = (lastRepsArray && lastRepsArray[i] !== undefined) ? lastRepsArray[i] : '-';
-                const threshold = thresholds ? thresholds[i] : null;
-                s += `<div class="input-row" style="align-items:center;">
-                    <label style="min-width:auto;">Série ${i+1}</label>
-                    <input type="number" id="${prefix}_${i}" min="0" value="" style="width:70px;" placeholder="Reps">
-                    <span style="font-size:12px; color:#64748b;">Dernière: ${last} reps${threshold ? ' (seuil ≥'+threshold+')' : ''}</span>
-                </div>`;
+                const prev = reps[i] !== undefined ? reps[i] : '-';
+                let options = `<option value="" selected disabled>Reps</option>`;
+                for (let r = 0; r <= maxReps; r++) options += `<option value="${r}">${r}</option>`;
+                s += `<div class="input-row"><label>Série ${i+1}</label><select id="${prefix}_${i}" style="width:80px;">${options}</select><span style="font-size:12px; color:#64748b;">Dernière: ${prev} reps</span></div>`;
             }
             return s;
         };
 
-        const last = state.lastReps || {};
+        const seriesFreeInputs = (prefix, count, currentWeight, thresholds) => {
+            const exoKey = prefix.replace('i_', '');
+            const reps = getLastRepsAtSameWeight(exoKey, currentWeight) || [];
+            let s = '';
+            for (let i = 0; i < count; i++) {
+                const prev = reps[i] !== undefined ? reps[i] : '-';
+                const threshold = thresholds ? thresholds[i] : null;
+                s += `<div class="input-row"><label>Série ${i+1}</label><input type="number" id="${prefix}_${i}" min="0" style="width:70px;" placeholder="Reps"><span style="font-size:12px; color:#64748b;">Dernière: ${prev} reps${threshold ? ' (seuil ≥'+threshold+')' : ''}</span></div>`;
+            }
+            return s;
+        };
 
         let mainHtml = '<div style="margin-bottom:16px;"><strong>📋 Exercices principaux</strong></div>';
 
         if (session === 'A') {
-            mainHtml += `
-                <p class="info-text">Séries fixes : choisis entre 0 et le max. Séries à l'échec : entre le nombre de reps.</p>
-                <div><strong>Squat LB 3×3</strong>${seriesFixedSelects('i_A_squat_3x3', 3, 3, last['A_squat_3x3'])}</div>
-                <div><strong>Squat LB backoff (échec)</strong>${seriesFreeInputs('i_A_squat_backoff', 1, last['A_squat_backoff'], [12])}</div>
-                <div><strong>OHP 5×5</strong>${seriesFixedSelects('i_A_ohp_5x5', 5, 5, last['A_ohp_5x5'])}</div>
-                <div><strong>Rowing déficit 2× échec</strong>${seriesFreeInputs('i_A_row', 2, last['A_row'], [12,10])}</div>`;
+            mainHtml += `<p class="info-text">Séries fixes : choisis entre 0 et le max. Séries à l'échec : entre le nombre de reps.</p>
+                <div><strong>Squat LB 3×3</strong>${seriesFixedSelects('i_A_squat_3x3', 3, 3, w.A_squat_3x3)}</div>
+                <div><strong>Squat LB backoff (échec)</strong>${seriesFreeInputs('i_A_squat_backoff', 1, w.A_squat_backoff, [12])}</div>
+                <div><strong>OHP 5×5</strong>${seriesFixedSelects('i_A_ohp_5x5', 5, 5, w.A_ohp_5x5)}</div>
+                <div><strong>Rowing déficit 2× échec</strong>${seriesFreeInputs('i_A_row', 2, w.A_row_echec, [12,10])}</div>`;
         } else if (session === 'B') {
-            mainHtml += `
-                <p class="info-text">Séries fixes : choisis entre 0 et le max. Séries à l'échec : entre le nombre de reps.</p>
-                <div><strong>Rowing déficit 3×3</strong>${seriesFixedSelects('i_B_row_3x3', 3, 3, last['B_row_3x3'])}</div>
-                <div><strong>Rowing déficit backoff (échec)</strong>${seriesFreeInputs('i_B_row_backoff', 1, last['B_row_backoff'], [12])}</div>
-                <div><strong>Squat LB 5×5</strong>${seriesFixedSelects('i_B_squat_5x5', 5, 5, last['B_squat_5x5'])}</div>
-                <div><strong>BTN Press 2× échec</strong>${seriesFreeInputs('i_B_btn', 2, last['B_btn'], [12,10])}</div>`;
+            mainHtml += `<p class="info-text">Séries fixes : choisis entre 0 et le max. Séries à l'échec : entre le nombre de reps.</p>
+                <div><strong>Rowing déficit 3×3</strong>${seriesFixedSelects('i_B_row_3x3', 3, 3, row3x3Weight)}</div>
+                <div><strong>Rowing déficit backoff (échec)</strong>${seriesFreeInputs('i_B_row_backoff', 1, w.B_row_backoff, [12])}</div>
+                <div><strong>Squat LB 5×5</strong>${seriesFixedSelects('i_B_squat_5x5', 5, 5, w.B_squat_5x5)}</div>
+                <div><strong>BTN Press 2× échec</strong>${seriesFreeInputs('i_B_btn', 2, w.B_btn_echec, [12,10])}</div>`;
         } else if (session === 'C') {
             const week = state.dlWeek;
             const dlSets = week === 0 ? 3 : week === 1 ? 4 : week === 2 ? 3 : 2;
             const dlMaxReps = week === 0 ? 5 : week === 1 ? 5 : week === 2 ? 3 : 2;
             const hasDlBackoff = w.dl_back[week] > 0;
-            mainHtml += `
-                <p class="info-text">Séries fixes : choisis entre 0 et le max. Séries à l'échec : entre le nombre de reps.</p>
-                <div><strong>Rowing déficit 5×5</strong>${seriesFixedSelects('i_C_row_5x5', 5, 5, last['C_row_5x5'])}</div>
-                <div><strong>Soulevé de daronnes</strong>${seriesFixedSelects('i_C_deadlift', dlSets, dlMaxReps, last['C_deadlift'])}</div>
-                ${hasDlBackoff ? `<div><strong>Soulevé de daronnes backoff 2×5</strong>${seriesFixedSelects('i_C_deadlift_back', 2, 5, last['C_deadlift_back'])}</div>` : ''}
-                <div><strong>OHP 3×3</strong>${seriesFixedSelects('i_C_ohp_3x3', 3, 3, last['C_ohp_3x3'])}</div>
-                <div><strong>OHP backoff (échec)</strong>${seriesFreeInputs('i_C_ohp_backoff', 1, last['C_ohp_backoff'], [12])}</div>
+            mainHtml += `<p class="info-text">Séries fixes : choisis entre 0 et le max. Séries à l'échec : entre le nombre de reps.</p>
+                <div><strong>Rowing déficit 5×5</strong>${seriesFixedSelects('i_C_row_5x5', 5, 5, w.C_row_5x5)}</div>
+                <div><strong>Soulevé de daronnes</strong>${seriesFixedSelects('i_C_deadlift', dlSets, dlMaxReps, w.dl_main[week])}</div>
+                ${hasDlBackoff ? `<div><strong>Soulevé de daronnes backoff 2×5</strong>${seriesFixedSelects('i_C_deadlift_back', 2, 5, w.dl_back[week])}</div>` : ''}
+                <div><strong>OHP 3×3</strong>${seriesFixedSelects('i_C_ohp_3x3', 3, 3, w.C_ohp_3x3)}</div>
+                <div><strong>OHP backoff (échec)</strong>${seriesFreeInputs('i_C_ohp_backoff', 1, w.C_ohp_backoff, [12])}</div>
                 <div><strong>Squat Stiletto (échec)</strong>
-                    <select id="i_C_stiletto_count">
-                        <option value="1">1 série</option>
-                        <option value="2">2 séries</option>
-                    </select>
-                    <div id="i_C_stiletto_boxes">${seriesFreeInputs('i_C_stiletto', 1, last['C_stiletto'], [12])}</div>
+                    <select id="i_C_stiletto_count"><option value="1">1 série</option><option value="2">2 séries</option></select>
+                    <div id="i_C_stiletto_boxes">${seriesFreeInputs('i_C_stiletto', 1, w.C_stiletto_echec, [12])}</div>
                 </div>`;
         }
 
-        // Accessoires (toujours en saisie libre)
         let accHtml = '';
         if (analysis.accessories.length > 0) {
-            accHtml = '<div style="margin-top:16px; margin-bottom:8px;"><strong>🔧 Accessoires</strong></div>';
-            accHtml += '<p class="info-text">Choisis le nombre de séries, puis renseigne les reps (échec).</p>';
+            accHtml = '<div style="margin-top:16px; margin-bottom:8px;"><strong>🔧 Accessoires</strong></div><p class="info-text">Choisis le nombre de séries, puis renseigne les reps (échec).</p>';
             analysis.accessories.forEach(key => {
                 const names = { tractions: 'Tractions de gay', rdl: 'RDL de gonzesse', btn: 'BTN Press', stiletto: 'Squat Stiletto' };
                 const accKey = `${session}_acc_${key}`;
-                const lastAcc = last[accKey] || [];
                 accHtml += `<div style="margin-bottom:12px;">
                     <strong>${names[key]}</strong>
-                    <select id="i_${accKey}_count">
-                        <option value="0">0 série</option>
-                        <option value="1" selected>1 série</option>
-                        <option value="2">2 séries</option>
-                    </select>
-                    <div id="i_${accKey}_boxes">${seriesFreeInputs('i_' + accKey, 1, lastAcc, [12, 10])}</div>
+                    <select id="i_${accKey}_count"><option value="0">0 série</option><option value="1" selected>1 série</option><option value="2">2 séries</option></select>
+                    <div id="i_${accKey}_boxes">${seriesFreeInputs('i_' + accKey, 1, accWeights[key], [12, 10])}</div>
                 </div>`;
             });
         }
 
         form.innerHTML = mainHtml + accHtml;
 
-        // Mise à jour dynamique des selects de nombre de séries
         const updateSeriesBoxes = (sel) => {
             const id = sel.id;
             const base = id.replace('_count', '');
             const boxesDiv = document.getElementById(base + '_boxes');
             const n = parseInt(sel.value);
             if (boxesDiv) {
-                const lastArr = last[base.replace('i_', '')] || [];
-                boxesDiv.innerHTML = seriesFreeInputs(base, n, lastArr, [12, 10]);
+                // Trouver le poids correspondant à cet accessoire
+                let weight = 0;
+                const parts = base.replace('i_', '').split('_acc_');
+                if (parts.length === 2) {
+                    const accKey = parts[1];
+                    weight = accWeights[accKey] || 0;
+                } else if (base.includes('stiletto')) {
+                    weight = w.C_stiletto_echec;
+                }
+                boxesDiv.innerHTML = seriesFreeInputs(base, n, weight, [12, 10]);
             }
         };
 
@@ -1618,10 +1797,26 @@ function renderImbalancesAndAccessories(state) {
         if (!currentProfileData) { showToast('Aucun profil chargé'); return; }
         hideAll(); chartScreen.classList.remove('hidden');
         updateLevelTable(currentProfileData);
+        updatePaliersTable(currentProfileData);
         renderImbalancesAndAccessories(currentProfileData);
     });
 
     document.getElementById('closeChartBtn').addEventListener('click', goToWorkout);
+
+    // Toggle déséquilibres : simple / objectifs
+    document.getElementById('toggleImbalanceView').addEventListener('click', () => {
+        imbalanceViewMode = imbalanceViewMode === 'simple' ? 'objectives' : 'simple';
+        if (currentProfileData) {
+            renderImbalancesAndAccessories(currentProfileData);
+        }
+    });
+
+    // Toggle paliers : poids / ratios
+    document.getElementById('togglePaliersView').addEventListener('click', () => {
+        paliersViewMode = paliersViewMode === 'weight' ? 'ratio' : 'weight';
+        document.getElementById('togglePaliersView').textContent = paliersViewMode === 'weight' ? 'Voir en ratios' : 'Voir en poids';
+        if (currentProfileData) updatePaliersTable(currentProfileData);
+    });
 
     function init() {
         showIntroModal();
@@ -1789,9 +1984,20 @@ function renderImbalancesAndAccessories(state) {
         saveProfile(currentProfileName, newData);
         currentProfileData = newData;
         renderWorkout(newData);
-        const topKey = session === 'A' ? 'A_squat_3x3' : (session === 'B' ? 'B_row_3x3' : 'C_ohp_3x3');
-        const topSuccess = results[topKey] === true;
-        showToast(topSuccess ? '💪 Monstre ! T\'es un gorille ! 🦍💢' : '😿 Raté, gros gay va');
+        const mainLiftsMap = {
+            A: { 'A_squat_3x3': 'Squat 3×3', 'A_squat_backoff': 'Squat backoff', 'A_ohp_5x5': 'OHP 5×5' },
+            B: { 'B_row_3x3': 'Rowing 3×3', 'B_row_backoff': 'Rowing backoff', 'B_squat_5x5': 'Squat 5×5' },
+            C: { 'C_row_5x5': 'Rowing 5×5', 'C_deadlift': 'Soulevé de daronnes', 'C_ohp_3x3': 'OHP 3×3' }
+        };
+        const lifts = mainLiftsMap[session];
+        const failed = Object.entries(lifts).filter(([key]) => !results[key]).map(([, name]) => name);
+        if (failed.length === 0) {
+            showToast('💪 Monstre ! Tous les main lifts validés ! 🦍💢');
+        } else if (failed.length === 1) {
+            showToast(`😿 Raté – ${failed[0]} non validé.`);
+        } else {
+            showToast(`😿 Raté – ${failed.join(' et ')} non validés.`);
+        }
         gorillaEmoji.classList.remove('gorilla-walk', 'gorilla-chest', 'gorilla-agitated');
         gorillaEmoji.classList.add('gorilla-chest');
         gorillaEmoji.textContent = '🦍💢';
@@ -1901,6 +2107,10 @@ function renderImbalancesAndAccessories(state) {
         document.getElementById('logScreen').classList.add('hidden');
     }
 
+    // Style pour griser les cases du niveau actuel
+    const style = document.createElement('style');
+    style.textContent = '.current-level { background-color: #cbd5e1 !important; font-weight: bold; }';
+    document.head.appendChild(style);
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(() => {});
     }
